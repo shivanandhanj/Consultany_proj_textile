@@ -1,6 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { Star } from 'lucide-react';
 import ProductReviews from './review';
 const ProductDetails = () => {
  
@@ -12,16 +13,25 @@ const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(0);
   const [showReviews, setShowReviews] = useState(false);
+ 
+
   const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <svg key={i} className={`w-4 h-4 ${i <= rating ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      );
-    }
-    return stars;
+    return Array(5).fill(0).map((_, index) => (
+      <Star
+        key={index}
+        className={`w-4 h-4 ${
+          index < rating 
+            ? 'text-yellow-400 fill-yellow-400' 
+            : 'text-gray-200'
+        }`}
+      />
+    ));
+  };
+
+  const getAverageRating = () => {
+    if (!product.reviews?.length) return 0;
+    const sum = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / product.reviews.length).toFixed(1);
   };
 
   const formatPrice = (price) => {
@@ -282,40 +292,81 @@ if (!product) return <p>Product not found.</p>;
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 border-t border-gray-200 pt-8">
-          <h2 className="text-2xl font-bold text-gray-900">Customer Reviews</h2>
-          
-          <div className="mt-6 space-y-6">
-            {product.reviews.length > 0 ? (
-              product.reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-6">
-                  <div className="flex items-center mb-2">
-                    <div className="flex">{renderStars(review.rating)}</div>
-                    <h4 className="ml-2 text-sm font-medium text-gray-900">{review.user}</h4>
-                    <span className="ml-2 text-sm text-gray-500">{review.date}</span>
-                  </div>
-                  <p className="text-sm text-gray-600">{review.comment}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">No reviews yet. Be the first to review this product!</p>
-            )}
+        <div className="max-w-4xl mx-auto mt-16 px-4 sm:px-6 lg:px-8">
+      <div className="border rounded-lg bg-white shadow-sm">
+        {/* Header Section */}
+        <div className="border-b border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Customer Reviews
+            </h2>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center">
+                <span className="text-3xl font-bold text-gray-900">
+                  {getAverageRating()}
+                </span>
+                <span className="ml-1 text-sm text-gray-500">/ 5</span>
+              </div>
+              <div className="flex">{renderStars(getAverageRating())}</div>
+            </div>
           </div>
-          
-          <div className="mt-8">
-  {/* Button to toggle review form */}
-  <button 
-    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-    onClick={() => setShowReviews(!showReviews)}
-  >
-    {showReviews ? "Hide Reviews" : "Write a Review"}
-  </button>
-
-  {/* Render Reviews Component When Needed */}
-  {showReviews && <ProductReviews product={product} />}
-</div>
-
+          <p className="mt-1 text-sm text-gray-500">
+            Based on {product.reviews?.length || 0} reviews
+          </p>
         </div>
+
+        {/* Reviews List */}
+        <div className="divide-y divide-gray-200">
+          {product.reviews?.length > 0 ? (
+            product.reviews.map((review) => (
+              <div key={review._id} className="p-6 hover:bg-gray-50">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                      <span className="text-indigo-700 font-medium">
+                        {review.user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {review.user.name}
+                      </h4>
+                      <time className="text-sm text-gray-500">{review.date}</time>
+                    </div>
+                    <div className="flex mt-1">
+                      {renderStars(review.rating)}
+                    </div>
+                    <p className="mt-3 text-sm text-gray-600 whitespace-pre-line">
+                      {review.comment}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="p-6 text-center">
+              <p className="text-gray-500">No reviews yet.</p>
+              <p className="text-sm text-gray-400">Be the first to share your thoughts!</p>
+            </div>
+          )}
+        </div>
+
+        {/* Review Form Toggle */}
+        <div className="border-t border-gray-200 p-6">
+          <button
+            onClick={() => setShowReviews(!showReviews)}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            {showReviews ? "Cancel Review" : "Write a Review"}
+          </button>
+        </div>
+
+        {/* Review Form */}
+        {showReviews && <ProductReviews product={product} />}
+      </div>
+    </div>
       </div>
     </div>
   );

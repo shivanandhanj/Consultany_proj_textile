@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import HomePage from "./pages/Home"; // Dashboard or main page after login
 import ProductListing from "./pages/ProductDetails"
 import Productdeep from "./pages/Productdeep"
+import AddProductForm from "./pages/productadd"
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("authToken") !== null // Check if token exists
@@ -32,6 +33,10 @@ const App = () => {
       <Route
        path="/productdeep"
        element={isAuthenticated? <Productdeep/>:<Navigate to="/login" />}
+      />
+      <Route
+      path="/add"
+      element = {<AddProductForm/>}
       />
 
       {/* Catch all unmatched routes */}
