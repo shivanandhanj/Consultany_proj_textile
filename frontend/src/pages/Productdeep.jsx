@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Star } from 'lucide-react';
 import ProductReviews from './review';
+import {jwtDecode} from "jwt-decode";
 const ProductDetails = () => {
  
 const { id } = useParams();
@@ -56,6 +57,51 @@ useEffect(() => {
 
     fetchProduct();
 }, [id]);
+
+const getUserDetails = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+        console.error("Token not found");
+        return null;
+    }
+
+    try {
+        const decoded = jwtDecode(token);
+        // console.log("Decoded Token:", decoded.userId); // Ensure userId exists
+
+        if (!decoded.userId) {
+            console.error("User ID not found in token");
+            return null;
+        }
+
+        return decoded.userId; // Return user ID instead of fetching name
+    } catch (error) {
+        console.error("Error decoding token:", error);
+        return null;
+    }
+};
+
+  const addCart=async()=>{
+    try{
+      console.log("shva");
+      const userId= await getUserDetails();
+        console.log("User ID:", id);
+      const response = await fetch(`http://localhost:5000/api/carts/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({userId,productId:product,quantity, selectedColor,selectedSize}),
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Cart updated:", data);
+
+    }catch (error) {
+      console.error("Failed to add to cart:", error);
+    }
+  }
 
 if (loading) return <p>Loading...</p>;
 if (!product) return <p>Product not found.</p>;
@@ -232,7 +278,7 @@ if (!product) return <p>Product not found.</p>;
 
             {/* Add to Cart Button */}
             <div className="mt-8">
-              <button
+              <button onClick={addCart}
                 disabled={!selectedSize || !selectedColor || product.stock === 0}
                 className={`
                   w-full flex items-center justify-center px-8 py-3 border border-transparent 

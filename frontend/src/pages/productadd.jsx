@@ -10,7 +10,7 @@ const AdminProductForm = () => {
   const [productData, setProductData] = useState({
     name: "",
     category: "Men",
-    subcategory: "",
+    subcategory: "Shirt",
     brand: "",
     description: "",
     price: "",
@@ -31,6 +31,8 @@ const AdminProductForm = () => {
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38", "40", "42", "44"];
   const categories = ["Men", "Women"];
+  const subcat=["Shirt","T-Shirt","Pant","Trousers"];
+  const colors=["Black","Blue","White"];
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ const AdminProductForm = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/admin/add", {
+      const response = await fetch("http://localhost:5000/api/admin/add/images", {
         method: 'POST',
         body: formData
       });
@@ -60,6 +62,7 @@ const AdminProductForm = () => {
       }
 
       const data = await response.json();
+      
       setImages(data.images);
       setImagePreviews(data.images);
       setError("");
@@ -101,29 +104,26 @@ const AdminProductForm = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     try {
+      const productDataWithImages = { ...productData, images };
+  
       const response = await fetch("http://localhost:5000/api/admin/add", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...productData,
-          images,
-        }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productDataWithImages),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add product');
+        throw new Error(errorData.message || "Failed to add product");
       }
-
+  
       // Reset form
       setProductData({
         name: "",
         category: "Men",
-        subcategory: "",
+        subcategory: "Shirt",
         brand: "",
         description: "",
         price: "",
@@ -139,13 +139,13 @@ const AdminProductForm = () => {
       });
       setImages([]);
       setImagePreviews([]);
-      
     } catch (err) {
       setError(err.message || "Failed to add product. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto p-8">
@@ -155,12 +155,7 @@ const AdminProductForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-b-lg p-6 space-y-6">
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+        
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -188,6 +183,34 @@ const AdminProductForm = () => {
               ))}
             </select>
           </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">SubCategory</label>
+            <select
+              name="subcategory"
+              value={productData.subcategory}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {subcat.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Brand</label>
+            <input
+              type="text"
+              name="brand"
+              value={productData.brand}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+          
+
+         
         </div>
 
         <div className="space-y-2">
@@ -260,6 +283,93 @@ const AdminProductForm = () => {
             ))}
           </div>
         </div>
+        
+<div className="space-y-2">
+  <label className="text-sm font-medium text-gray-700">Colors</label>
+  <div className="flex flex-wrap gap-2">
+    {colors.map((color) => (
+      <label key={color} className="inline-flex items-center">
+        <input
+          type="checkbox"
+          checked={productData.color.includes(color)}
+          onChange={(e) => {
+            const newColors = e.target.checked
+              ? [...productData.color, color]
+              : productData.color.filter((c) => c !== color);
+            setProductData({ ...productData, color: newColors });
+          }}
+          className="form-checkbox h-4 w-4 text-blue-600"
+        />
+        <span className="ml-2 text-sm text-gray-700">{color}</span>
+      </label>
+    ))}
+  </div>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Pattern</label>
+            <input
+              type="text"
+              name="pattern"
+              value={productData.pattern}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Fit</label>
+            <input
+              type="text"
+              name="fit"
+              value={productData.fit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Sleeve_Length</label>
+            <input
+              type="text"
+              name="sleeve_length"
+              value={productData.sleeve_length}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Fabric</label>
+            <input
+              type="text"
+              name="fabric"
+              value={productData.fabric}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Occasion</label>
+            <input
+              type="text"
+              name="occasion"
+              value={productData.occasion}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+</div>
 
         <div
           className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
@@ -329,7 +439,7 @@ const AdminProductForm = () => {
           {loading ? (
             <>
               <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-              Adding Product...
+              Adding Images...
             </>
           ) : (
             'Add Product'

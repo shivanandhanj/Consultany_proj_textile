@@ -5,7 +5,9 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const product=require('./routes/product.routes');
 const review=require('./routes/review.routes');
-const addProd=require('./routes/addproduct.routes')
+const addProd=require('./routes/addproduct.routes');
+const cart=require('./routes/cart.routes');
+const Order=require('./routes/order.routes')
 const app = express();
 
 app.use(cors());
@@ -14,6 +16,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products',product);
 app.use('/api/reviews',review);
 app.use('/api/admin',addProd);
+app.use('/api',cart);
+app.use('/api',Order);
+
 MONGODB_URI="mongodb+srv://shivanandhanj22cse:04HwhUFHWBdd8UwO@cluster0.qcf0s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 mongoose.connect(MONGODB_URI)

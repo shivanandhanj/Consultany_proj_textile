@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import ShineButton from '../components/Button';
+
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -78,6 +79,8 @@ const HomePage = () => {
       </section>
 
       {/* Featured Products */}
+
+      
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-10">Featured Products</h2>

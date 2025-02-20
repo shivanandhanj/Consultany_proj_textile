@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 const ShineButton = ({ text }) => {
   return (
     <div className="relative w-full h-32 flex items-center justify-center">
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes shine {
           0% {
             background-position: 0;
