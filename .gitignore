@@ -1,44 +1,71 @@
-# Node.js & Express Backend
-/node_modules
-/.env
-/package-lock.json
-/yarn.lock
-/dist
-/build
-/logs
+
+# Node.js dependencies (backend & frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
 /coverage
+pnpm-debug.log*
 
-# React Frontend
-/frontend/node_modules
-/frontend/.env
-/frontend/package-lock.json
-/frontend/yarn.lock
-/frontend/build
-/frontend/.next
-/frontend/.turbo
-/frontend/coverage
-/frontend/.cache
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
 
+# Build files
+/build
+/dist
+/out
+.cache
+.next
 
-/backend/node_modules/
-# OS & Editor Files
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*.swn
+# Editor/IDE Specific Files
 .vscode/
 .idea/
-*.iml
-*.sublime-project
-*.sublime-workspace
+*.swp
+*.swo
 
-# Misc
-*.log
-*.pid
-*.seed
-*.pid.lock
+# OS System Files
+.DS_Store
+Thumbs.db
+
+# Coverage Reports
+/coverage
+/nyc_output
+
+# Database files (if applicable)
+*.sqlite
+*.sqlite-journal
+/data/db
+
+# Public uploads (optional)
+public/uploads/
+public/images/
+
+# React-specific
+node_modules/
+build/
+.cache/
+*.env.local
+
+# Linting / Formatting
+.eslintcache
+.prettierignore
+
+# Debugging
+*.rej
+*.orig
+>>>>>>> master
