@@ -8,6 +8,7 @@ const review=require('./routes/review.routes');
 const addProd=require('./routes/addproduct.routes');
 const cart=require('./routes/cart.routes');
 const Order=require('./routes/order.routes')
+const Fav=require('./routes/fav.routes');
 const app = express();
 
 app.use(cors());
@@ -18,6 +19,7 @@ app.use('/api/reviews',review);
 app.use('/api/admin',addProd);
 app.use('/api',cart);
 app.use('/api',Order);
+app.use('/api',Fav);
 
 MONGODB_URI="mongodb+srv://shivanandhanj22cse:04HwhUFHWBdd8UwO@cluster0.qcf0s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 

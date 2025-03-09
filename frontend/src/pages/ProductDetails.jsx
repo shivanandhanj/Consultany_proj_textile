@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
+import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
+import { CartContext } from '../context/CartContext';
 const ProductListing = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // Search feature
+ 
   const [filters, setFilters] = useState({
     category: '',
     subcategory: '',
@@ -13,6 +17,29 @@ const ProductListing = () => {
     color: '',
     priceRange: '',
   });
+  const [favorites, setFavorites] = useState({});
+  const { userId } = useContext(CartContext);
+
+  // Toggle favorite status
+  const toggleFavorite = async (e,productId) => {
+    e.stopPropagation();
+    setFavorites((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+    try {
+      await axios.post('http://localhost:5000/api/fav/add', {
+        userId,
+        productId
+      });
+      alert("Added to favorites");
+    } catch (error) {
+      console.error("Error adding favorite", error);
+    }
+
+
+    // You can also store favorites in localStorage or backend
+  };
 
   // Fetch products
   useEffect(() => {
@@ -40,12 +67,16 @@ const ProductListing = () => {
     }));
   };
   const navigate = useNavigate();
-
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   // Filter products based on selected filters
   const filteredProducts = products.filter(product => {
     let matches = true;
-    
+    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      matches = false;
+    }
     if (filters.category && product.category !== filters.category) matches = false;
     if (filters.subcategory && product.subcategory !== filters.subcategory) matches = false;
     if (filters.brand && product.brand !== filters.brand) matches = false;
@@ -68,15 +99,66 @@ const ProductListing = () => {
     return [...new Set(values)].filter(Boolean);
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 border-b-indigo-600 border-solid rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Products</h1>
-      
+
+<header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+              <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-8">
+               <Link to="/" className="text-gray-600 hover:text-indigo-600">
+  Home
+</Link> 
+              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+  Shop
+</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
+              <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
+              <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
+              
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative hidden md:block">
+              <input
+  type="text"
+  placeholder="Search products..."
+  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
+              </div>
+               <div className="relative" onClick={()=> navigate("/fav")}>
+                            <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                            </div> <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+              <div className="relative" onClick={() => navigate("/cart")}>
+                <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              </div>
+            </div> 
+          </div>
+        </div>
+      </header>
+
+     
       {/* Filters */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mb-8 shadow-sm">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mt-8 mb-8 shadow-sm">
   <div className="flex flex-wrap items-center justify-between mb-4">
     <h2 className="text-xl font-bold text-gray-800 flex items-center">
       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
@@ -281,6 +363,17 @@ const ProductListing = () => {
           filteredProducts.map(product => (
             <div key={product._id} onClick={()=>{navigate(`/product/${product._id}`)}}className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="relative pb-[100%]">
+              <button
+         onClick={(e) => toggleFavorite(e, product._id)}
+        className="absolute top-2 right-2 bg-transparent  rounded-full p-1 z-10 shadow-md hover:scale-110 transition"
+      >
+        <Heart 
+          className="h-6 w-6 transition"
+          fill={favorites[product._id] ? "red" : "none"} // Fill red if favorite
+          stroke={favorites[product._id] ? "red" : "gray"}  // Keeps the outline visible
+        />
+       
+      </button>
                 <img 
                   src={product.images[0]} 
                   alt={product.name}

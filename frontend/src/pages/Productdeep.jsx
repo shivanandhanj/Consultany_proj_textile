@@ -4,8 +4,9 @@ import axios from "axios";
 import { Star } from 'lucide-react';
 import ProductReviews from './review';
 import {jwtDecode} from "jwt-decode";
+import { useToast } from '../context/ToastContext';
 const ProductDetails = () => {
- 
+  const { showSuccess } = useToast();
 const { id } = useParams();
 const [product, setProduct] = useState(null);
 const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ const [selectedSize, setSelectedSize] = useState('');
   const [mainImage, setMainImage] = useState(0);
   const [showReviews, setShowReviews] = useState(false);
  
-
+ 
   const renderStars = (rating) => {
     return Array(5).fill(0).map((_, index) => (
       <Star
@@ -83,9 +84,9 @@ const getUserDetails = async () => {
 
   const addCart=async()=>{
     try{
-      console.log("shva");
+      
       const userId= await getUserDetails();
-        console.log("User ID:", id);
+
       const response = await fetch(`http://localhost:5000/api/carts/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,16 +95,24 @@ const getUserDetails = async () => {
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
+      showSuccess(`${product.name} added to cart!`);
       const data = await response.json();
       console.log("Cart updated:", data);
+     
 
     }catch (error) {
       console.error("Failed to add to cart:", error);
     }
   }
 
-if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-3">
+        <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-500 border-solid rounded-full animate-spin"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 if (!product) return <p>Product not found.</p>;
 
   

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import ShineButton from '../components/Button';
-
+import { useNavigate ,Link} from "react-router-dom";
 const HomePage = () => {
+  const navigate = useNavigate(); 
   return (
+    
     <div className="min-h-screen bg-white">
       {/* Header/Navbar */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -16,10 +18,12 @@ const HomePage = () => {
             
             <div className="hidden md:flex items-center space-x-8">
               <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Shop</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
+              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+  Shop
+</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
               <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
               <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
+              
             </div>
             
             <div className="flex items-center space-x-4">
@@ -31,13 +35,15 @@ const HomePage = () => {
                 />
                 <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
               </div>
+              <div className="relative" onClick={()=> navigate("/fav")}>
               <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+              </div>
               <User className="h-6 w-6 text-gray-600 cursor-pointer" />
-              <div className="relative">
+              <div className="relative" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
                 <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
               </div>
-            </div>
+            </div> 
           </div>
         </div>
       </header>
