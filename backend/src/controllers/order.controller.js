@@ -1,10 +1,11 @@
 const Order=require('../models/order.model')
-
+const Product=require('../models/product.model')
+const Cart=require('../models/cart.model');
 const session=async(req,res)=>{
 
 try {
         const { userId, cartItems, shippingAddress } = req.body;
-
+        console.log(userId,cartItems,shippingAddress);
         // Validate cart items and check stock
         const validatedItems = await Promise.all(cartItems.map(async (item) => {
             const product = await Product.findById(item.productId);
@@ -32,9 +33,10 @@ try {
         });
 
         await order.save();
+        console.log("shiva")
 
         // Clear cart after successful order creation
-        await CartItem.deleteMany({ userId });
+        // await Cart.deleteMany({ userId });
 
         res.json({
             orderId: order._id,
@@ -42,6 +44,7 @@ try {
             success: true
         });
     } catch (error) {
+        
         res.status(400).json({
             success: false,
             message: error.message

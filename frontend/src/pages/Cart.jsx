@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Minus, Plus, X, ShoppingCart } from 'lucide-react';
-import { jwtDecode } from 'jwt-decode';
+import { Minus, Plus, X, ShoppingCart,Search, Menu, Heart, User} from 'lucide-react';
+import { CartContext } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
+import { useNavigate ,Link} from "react-router-dom";
 const CartManagement = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { cartItems, setCartItems,loading } = useContext(CartContext);
+  const { showSuccess } = useToast();
   const [error, setError] = useState(null);
-  const getUserDetails = async () => {
+    const getUserDetails = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) {
           console.error("Token not found");
@@ -32,22 +34,8 @@ const CartManagement = () => {
   const API_URL = 'http://localhost:5000/api';
 
   useEffect(() => {
-    fetchCartItems();
-  }, []);
-
-  const fetchCartItems = async () => {
-    try {
-      const userId=await getUserDetails();
-      setLoading(true);
-      const response = await axios.get(`${API_URL}/cart/${userId}`);
-      setCartItems(response.data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch cart items');
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("Updated Cart  da pnda Items:", cartItems);
+  }, [cartItems]);
 
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -81,12 +69,46 @@ const CartManagement = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return <div className="flex justify-center items-center h-64">Loading. da punda ..</div>;
   }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="flex items-center gap-2 mb-8">
+
+<header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+              <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
+              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+  Shop
+</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
+              
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative hidden md:block">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
+              </div>
+              <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+              <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+             
+            </div> 
+          </div>
+        </div>
+      </header>
+
+      <div className="flex items-center mt-8 gap-2 mb-8">
         <ShoppingCart className="w-6 h-6" />
         <h1 className="text-2xl font-bold text-gray-800">Shopping Cart</h1>
       </div>
