@@ -4,8 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css"; // Ensure Tailwind or global styles are imported
 import { CartProvider } from "./context/CartContext";
-
-import { ProductProvider } from "./context/AllContext";
 import {PageLoader} from "./components/loader";
 import {ToastProvider} from "./context/ToastContext";
 import ToastContainer from './components/ToastContainer';
@@ -16,10 +14,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <CartProvider>
       <PageLoader />
       <ToastContainer />
-
-      <ProductProvider>
         <App />
-        </ProductProvider>
+        
       </CartProvider>
       </ToastProvider>
       

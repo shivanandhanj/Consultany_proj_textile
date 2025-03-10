@@ -12,21 +12,10 @@ const productSchema = new mongoose.Schema(
         size: {
             type: [String],
             enum: ["XS", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38", "40", "42", "44"],
-            
+            required: true
           },
           
-        color: { type: [String],  },
-        variants: [
-            {
-              size: {
-                type: String,
-                enum: ["XS", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38", "40", "42", "44"],
-                required: true,
-              },
-              color: { type: String, required: true },
-              stock: { type: Number, required: true, default: 0 }, // ✅ Stock count
-            }
-          ],
+        color: { type: [String], required: true },
         fabric: { type: String, required: true },
         pattern: { type: String, required: true },
         sleeve_length: { type: String, required: true },

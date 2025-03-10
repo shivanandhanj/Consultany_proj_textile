@@ -20,9 +20,9 @@ const upload = multer({ storage });
 const addProduct = async (req, res) => {
   try {
     console.log(req.body);
-    const { name, category, subcategory,brand,description,price,discount_price, variants,fabric,pattern,sleeve_length,fit,occasion,stock,images} = req.body;
+    const { name, category, subcategory,brand,description,price,discount_price, size,color,fabric,pattern,sleeve_length,fit,occasion,stock,images} = req.body;
      
-    const newProduct = new Product({ name, category, subcategory,brand,description,price,discount_price,variants,fabric,pattern,sleeve_length,fit,occasion,stock, images  });
+    const newProduct = new Product({ name, category, subcategory,brand,description,price,discount_price,size,color,fabric,pattern,sleeve_length,fit,occasion,stock, images  });
     await newProduct.save();
 
     res.status(201).json({ message: "Product added successfully!", newProduct });
