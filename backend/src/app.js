@@ -21,7 +21,7 @@ app.use('/api',cart);
 app.use('/api',Order);
 app.use('/api',Fav);
 
-MONGODB_URI="mongodb+srv://shivanandhanj22cse:04HwhUFHWBdd8UwO@cluster0.qcf0s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+MONGODB_URI="mongodb+srv://shivanandhanj22cse:nanzu_05@cluster0.qcf0s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 mongoose.connect(MONGODB_URI)
   .then(() => {console.log('Connected to MongoDB')

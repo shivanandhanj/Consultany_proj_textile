@@ -9,6 +9,17 @@ import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import Favour from "./pages/Favour" 
 import Profile from "./pages/Profile"
+
+
+import Layout from "./components/Layout";
+import Dashboard from "./pages/admin/Dashboard";
+import Products from "./pages/admin/Products";
+import Customers from "./pages/admin/Customers";
+import Orders from "./pages/admin/Orders";
+import Inventory from "./pages/admin/Inventory";
+import { Sidebar } from "lucide-react";
+
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("authToken") !== null // Check if token exists
@@ -70,7 +81,21 @@ const App = () => {
 
       {/* Catch all unmatched routes */}
       <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} />} />
+
+
+      <Route path="/admin" element={<Layout />} >
+          <Route path="" element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="inventory" element={<Inventory />} />
+        </Route>
+
     </Routes>
+
+
+
+
     
    
   );
