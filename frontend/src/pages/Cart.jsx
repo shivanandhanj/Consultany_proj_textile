@@ -69,7 +69,12 @@ const CartManagement = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading. da punda ..</div>;
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-3">
+      <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-500 border-solid rounded-full animate-spin"></div>
+      <p className="text-gray-600">Loading...</p>
+    </div>
+    )
   }
 
   return (

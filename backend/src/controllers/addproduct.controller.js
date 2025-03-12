@@ -49,5 +49,35 @@ const getProducts = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const updateProducts=async(req,res)=>{
 
-module.exports = { addProduct, getProducts,addimage, upload };
+  try{
+   
+    const products=await Product.findById(req.params.id);
+   
+    res.json(products);
+  }catch(error){
+    res.status(500).json({message: "Server error"});
+  }
+}
+
+const updateProudctsadd=async(req,res)=>{
+  try {
+    const {id}  = req.params;
+    const updates = req.body; // Contains only modified fields
+   console.log(updates);
+    // Update only the provided fields
+    const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
+   console.log(updatedProduct)
+    if (!updatedProduct) {
+        return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(updatedProduct);
+} catch (error) {
+    res.status(500).json({ error: "Error updating product" });
+}
+
+
+}
+module.exports = { addProduct,updateProudctsadd, getProducts,addimage, upload ,updateProducts};
