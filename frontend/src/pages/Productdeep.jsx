@@ -10,13 +10,50 @@ const ProductDetails = () => {
 const { id } = useParams();
 const [product, setProduct] = useState(null);
 const [loading, setLoading] = useState(true);
-const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
+const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(0);
   const [showReviews, setShowReviews] = useState(false);
  
- 
+  useEffect(() => {
+    const fetchProduct = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+            
+            setProduct(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            setLoading(false);
+        }
+    };
+
+    fetchProduct();
+}, [id]);
+
+  // Extract available sizes & colors with stock > 0
+  const availableVariants = product?.variants?.filter(variant => variant.stock > 0) || [];
+  const availableSizes = [...new Set(availableVariants.map(variant => variant.size))];
+  const availableColors = selectedSize
+    ? availableVariants.filter(variant => variant.size === selectedSize).map(variant => variant.color)
+    : [];
+  
+  // Ensure selected size & color are valid
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    setSelectedColor(null); // Reset color when size changes
+    setQuantity(1);
+  };
+
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+    setQuantity(1);
+  };
+
+  // Find stock for selected variant
+  const selectedVariant = availableVariants.find(variant => variant.size === selectedSize && variant.color === selectedColor);
+  const maxStock = selectedVariant ? selectedVariant.stock : 1;
   const renderStars = (rating) => {
     return Array(5).fill(0).map((_, index) => (
       <Star
@@ -43,21 +80,7 @@ const [selectedSize, setSelectedSize] = useState('');
       minimumFractionDigits: 0
     }).format(price / 100);
   };
-useEffect(() => {
-    const fetchProduct = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/api/products/${id}`);
-            
-            setProduct(response.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching product:", error);
-            setLoading(false);
-        }
-    };
 
-    fetchProduct();
-}, [id]);
 
 const getUserDetails = async () => {
     const token = localStorage.getItem("authToken");
@@ -199,91 +222,95 @@ if (!product) return <p>Product not found.</p>;
 
             {/* Select Size */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900">Size</h3>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {product.size.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`
-                      px-3 py-1 border rounded-md text-sm font-medium
-                      ${selectedSize === size 
-                        ? 'bg-indigo-600 text-white border-indigo-600' 
-                        : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <h3 className="text-sm font-medium text-gray-900">Size</h3>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {availableSizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => handleSizeSelect(size)}
+              className={`
+                px-3 py-1 border rounded-md text-sm font-medium
+                ${selectedSize === size 
+                  ? 'bg-indigo-600 text-white border-indigo-600' 
+                  : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                }
+              `}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
 
             {/* Select Color */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900">Color</h3>
-              <div className="mt-2 flex flex-wrap gap-3">
-                {product.color.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`
-                      relative rounded-full w-8 h-8 flex items-center justify-center
-                      ${selectedColor === color ? 'ring-2 ring-offset-2 ring-indigo-500' : ''}
-                    `}
-                    style={{ backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' : color.toLowerCase() }}
-                    title={color}
-                  >
-                    {color.toLowerCase() === 'white' && (
-                      <span className="absolute inset-0 rounded-full border border-gray-300"></span>
-                    )}
-                    {selectedColor === color && color.toLowerCase() === 'white' && (
-                      <svg className="h-4 w-4 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    {selectedColor === color && color.toLowerCase() !== 'white' && (
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <h3 className="text-sm font-medium text-gray-900 mt-4">Color</h3>
+        <div className="mt-2 flex flex-wrap gap-3">
+          {availableColors.map((color) => (
+            <button
+              key={color}
+              onClick={() => handleColorSelect(color)}
+              className={`
+                relative rounded-full w-8 h-8 flex items-center justify-center
+                ${selectedColor === color ? 'ring-2 ring-offset-2 ring-indigo-500' : ''}
+              `}
+              style={{ backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' : color.toLowerCase() }}
+              title={color}
+            >
+              {color.toLowerCase() === 'white' && (
+                <span className="absolute inset-0 rounded-full border border-gray-300"></span>
+              )}
+              {selectedColor === color && color.toLowerCase() === 'white' && (
+                <svg className="h-4 w-4 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+              {selectedColor === color && color.toLowerCase() !== 'white' && (
+                <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
 
             {/* Quantity */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900">Quantity</h3>
-              <div className="mt-2 flex items-center">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-1 text-gray-400 hover:text-gray-500"
-                  disabled={quantity <= 1}
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.min(product.stock, Math.max(1, parseInt(e.target.value) || 1)))}
-                  className="mx-2 w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="p-1 text-gray-400 hover:text-gray-500"
-                  disabled={quantity >= product.stock}
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+        <h3 className="text-sm font-medium text-gray-900 mt-4">Quantity</h3>
+        <div className="mt-2 flex items-center">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="p-1 text-gray-400 hover:text-gray-500"
+            disabled={quantity <= 1 || !selectedVariant}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+          <input
+            type="number"
+            min="1"
+            max={maxStock}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.min(maxStock, Math.max(1, parseInt(e.target.value) || 1)))}
+            className="mx-2 w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            disabled={!selectedVariant}
+          />
+          <button
+            onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
+            className="p-1 text-gray-400 hover:text-gray-500"
+            disabled={quantity >= maxStock || !selectedVariant}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+        {selectedVariant && selectedVariant.stock < 5 && (
+          <p className="text-xs text-red-500 mt-1">Only {selectedVariant.stock} left in stock!</p>
+        )}
+      </div>
 
             {/* Add to Cart Button */}
             <div className="mt-8">

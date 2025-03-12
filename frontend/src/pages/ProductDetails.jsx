@@ -393,24 +393,34 @@ const ProductListing = () => {
                 </div>
                 
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {product.size.slice(0, 3).map(size => (
-                    <span key={size} className="px-2 py-1 bg-gray-100 text-xs rounded">{size}</span>
-                  ))}
-                  {product.size.length > 3 && <span className="px-2 py-1 text-xs">+{product.size.length - 3} more</span>}
-                </div>
+  {product.variants.slice(0, 3).map((variant, index) => (
+    <span key={index} className="px-2 py-1 bg-gray-100 text-xs rounded">
+      {variant.size}
+    </span>
+  ))}
+  {product.variants.length > 3 && (
+    <span className="px-2 py-1 text-xs">
+      +{product.variants.length - 3} more
+    </span>
+  )}
+</div>
                 
                 <div className="flex items-center justify-between">
-                  <div className="flex">
-                    {product.color.slice(0, 3).map(color => (
-                      <div 
-                        key={color}
-                        className="w-4 h-4 rounded-full mr-1 border border-gray-300"
-                        style={{ backgroundColor: color.toLowerCase() }}
-                        title={color}
-                      />
-                    ))}
-                    {product.color.length > 3 && <span className="text-xs">+{product.color.length - 3}</span>}
-                  </div>
+                <div className="flex items-center justify-between">
+  <div className="flex">
+    {product.variants.slice(0, 3).map((variant, index) => (
+      <div
+        key={index}
+        className="w-4 h-4 rounded-full mr-1 border border-gray-300"
+        style={{ backgroundColor: variant.color.toLowerCase() }}
+        title={variant.color}
+      />
+    ))}
+    {product.variants.length > 3 && (
+      <span className="text-xs">+{product.variants.length - 3}</span>
+    )}
+  </div>
+</div>
                   
                   {product.stock > 0 ? (
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">In Stock</span>

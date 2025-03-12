@@ -5,8 +5,7 @@ const session=async(req,res)=>{
 
 try {
         const { userId, cartItems, shippingAddress } = req.body;
-        console.log(userId,cartItems,shippingAddress);
-        // Validate cart items and check stock
+
         const validatedItems = await Promise.all(cartItems.map(async (item) => {
             const product = await Product.findById(item.productId);
             if (!product || product.stockQuantity < item.quantity) {
@@ -28,15 +27,44 @@ try {
             userId,
             items: validatedItems,
             shippingAddress,
-            totalAmount,
+            totalAmount,    
             status: 'pending'
         });
 
         await order.save();
-        console.log("shiva")
+
+        for (const item of cartItems) {
+            const product = await Product.findById(item.productId);
+            if (!product) {
+              return res.status(404).json({ error: "Product not found" });
+            }
+      
+            // Find the correct variant (size + color match)
+            const variant = product.variants.find(
+              (v) => v.size === item.size && v.color === item.color
+            );
+      
+            if (!variant) {
+              return res.status(400).json({ error: "Variant not found" });
+            }
+      
+            // Check if stock is sufficient
+            if (variant.stock < item.quantity) {
+              return res.status(400).json({ error: `Not enough stock for ${product.name} (${variant.size}, ${variant.color})` });
+            }
+      
+            // Reduce stock
+            variant.stock -= item.quantity;
+      
+            // Save updated product
+            await product.save();
+          }
+        
 
         // Clear cart after successful order creation
-        // await Cart.deleteMany({ userId });
+        await Cart.deleteMany({ userId });
+
+        
 
         res.json({
             orderId: order._id,

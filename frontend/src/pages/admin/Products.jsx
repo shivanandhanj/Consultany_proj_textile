@@ -2,11 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {  Upload, X,Loader2,Search, Plus, Trash2, Edit, Package, Grid, ChevronDown, User, Settings, LogOut, ShoppingBag, Home ,Eye } from "lucide-react";
 import { AllContext } from '../../context/AllContext';
-
+import Modald from '../../components/Delmodal'
+import Modal from '../../components/Modal';
+import axios from "axios"
 const Product = () => {
-  const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const[isDelOpen,setIsDelOpen]=useState(false);
   const navigate = useNavigate();
-  const isEditMode = Boolean(id);
+  const [isEditMode,setMode] =useState(false);
   
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -35,6 +38,10 @@ const Product = () => {
     stock: 0,
     
   });
+
+  const [originalProduct, setOriginalProduct] = useState({});
+  
+
 
 
   const [activeTab, setActiveTab] = useState('products');
@@ -116,22 +123,27 @@ const Product = () => {
   };
   
   // Fetch product data if in edit mode
-  useEffect(() => {
-    if (isEditMode) {
-      fetchProduct();
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (isEditMode) {
+  //     fetchProduct();
+  //   }
+  // }, [id]);
 
   // Fetch product data from API
-  const fetchProduct = async () => {
+  const fetchProduct = async (id) => {
     try {
+      if(!id) return ;
+      setMode(true);
       setLoading(true);
+     
       // Replace with your actual API endpoint
-      const response = await fetch(`/api/products/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch product');
-      
-      const data = await response.json();
-      setProduct(data);
+      const response = await axios.get(`http://localhost:5000/api/admin/update/${id}`);
+      setProduct(response.data);
+      setOriginalProduct(response.data);
+      setImages([]);
+      setImagePreviews([]);
+      setLoading(false);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -142,14 +154,9 @@ const Product = () => {
   // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "size" || name === "color") {
-      setProduct({
-        ...product,
-        [name]: value.split(",").map(item => item.trim()),
-      });
-    } else {
+   
       setProduct({ ...product, [name]: value });
-    }
+    
   };
 
   // Handle numeric input changes with validation
@@ -223,11 +230,19 @@ const Product = () => {
     setProduct({ ...product, images: updatedImages });
   };
 
+  const confirmDelete = () => {
+ // Perform delete request here (Axios / Fetch)
+  console.log("deketed");
+    setIsDelOpen(false);
+  };
+ 
   // Save product
   const saveProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    
+    if(!isEditMode){
     try {
         const productDataWithImages = { ...product, images };
     
@@ -266,6 +281,38 @@ const Product = () => {
       } finally {
         setLoading(false);
       }
+    }else{
+      const updatedFields = {};
+      const id=originalProduct._id;
+
+      
+      console.log(id);
+        Object.keys(product).forEach(key => {
+            if (JSON.stringify(product[key]) !== JSON.stringify(originalProduct[key])) {
+                updatedFields[key] = product[key]; // Include only changed fields
+            }
+        });
+
+
+        if (Object.keys(updatedFields).length === 0) {
+          alert("No changes made!");
+          return;
+      }
+
+      try {
+        
+          const response=await axios.put(`http://localhost:5000/api/admin/update/${id}`, updatedFields);
+          alert("Product updated successfully!");
+
+
+         
+      } catch (error) {
+          console.error("Error updating product:", error);
+      }finally{
+        setMode(false);
+      }
+
+    }
     };
   
     const categoriess = [
@@ -340,6 +387,10 @@ const Product = () => {
           </div>
         </header>
 
+
+        <Modald isOpen={isDelOpen} onClose={() => setIsDelOpen(false)} onConfirm={confirmDelete} />
+  
+
       <main className="p-6">
           <div className="flex justify-between items-center mb-6">
           <div className="relative ml-4">
@@ -372,7 +423,7 @@ const Product = () => {
     </div>
   );
 
-            <button className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
+            <button className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"   onClick={() => setIsModalOpen(true)}>
               <Plus size={18} className="mr-2" />
               Add New Product
             </button>
@@ -417,10 +468,10 @@ const Product = () => {
                     <button className="text-indigo-600 hover:text-indigo-900 mr-3">
                         <Eye size={18} />
                       </button>
-                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-3" onClick={() => {fetchProduct(product._id),setIsModalOpen(true)}}>
                         <Edit size={18} />
                       </button>
-                      <button className="text-red-600 hover:text-red-900">
+                      <button className="text-red-600 hover:text-red-900" onClick={() => setIsDelOpen(true)}>
                         <Trash2 size={18} />
                       </button>
                     </td>
@@ -494,7 +545,8 @@ const Product = () => {
 
 
 
-
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+    
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
@@ -513,8 +565,7 @@ const Product = () => {
           {error}
         </div>
       )}
-
-      <form onSubmit={saveProduct} className="space-y-6">
+         <form onSubmit={saveProduct} className="space-y-6">
         {/* Basic Info Section */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <h2 className="text-lg font-semibold mb-4 text-gray-700">Basic Information</h2>
@@ -921,7 +972,7 @@ const Product = () => {
             {saving ? 'Saving...' : isEditMode ? 'Update Product' : 'Create Product'}
           </button> */}
 
-<button
+<button onClick={() => setIsModalOpen(true)}
   type="submit"
   disabled={saving}
   className={`px-4 py-2 rounded-md text-white transition-colors ${
@@ -933,12 +984,14 @@ const Product = () => {
       <span>Adding Images...</span>
     </>
   ) : (
-    'Add Product'
+     isEditMode ? 'Update Product' : 'Create Product'
+      
   )}
 </button>
 
         </div>
       </form>
+      </Modal>
     </div>
   );
 };

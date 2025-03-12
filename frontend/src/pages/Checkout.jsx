@@ -5,9 +5,7 @@ import { CartContext } from '../context/CartContext';
 const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
   const { cartItems,userId } = useContext(CartContext);
   
-  useEffect(() => {
-    console.log("Updated Cart Items:", cartItems);
-  }, [cartItems]);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [shippingDetails, setShippingDetails] = useState({
@@ -15,7 +13,8 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
     address: '',
     city: '',
     postalCode: '',
-    country: ''
+    phone:'',
+    country: '',
   });
   // if (!Array.isArray(cartItems)) {
   //   return <p>No items in the cart.</p>;  // ✅ Prevent error if cartItems is not an array
@@ -51,11 +50,13 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
           'Content-Type': 'application/json',
         }
       });
-      console.log(sessionResponse.data)
+
+
+     
 
       
 
-      const { orderId, totalAmount } = await sessionResponse.json();
+      const { orderId, totalAmount } = sessionResponse.data;
 
       // Simulate payment process (replace with actual payment gateway)
       const paymentDetails = {
@@ -109,6 +110,8 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
       <div>
       <h2>Shopping Cart</h2>
+
+      
       {cartItems.length > 0 ? (
         cartItems.map((item) => (
           <div key={item._id} className="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
@@ -181,6 +184,8 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       )}
 
     </div>
+
+    
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-4">
           {error}
@@ -190,8 +195,10 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
         
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-3">
+
+        <div className="grid grid-cols-2 gap-4">
+         <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
             </label>
@@ -203,6 +210,21 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               className="w-full p-2 border rounded-lg"
               required
             />
+          </div>
+
+          <div >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={shippingDetails.phone}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded-lg"
+              required
+            />
+          </div>
           </div>
 
           <div>
@@ -219,7 +241,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 City
@@ -247,9 +269,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
                 required
               />
             </div>
-          </div>
-
-          <div>
+            <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Country
             </label>
@@ -262,7 +282,12 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               required
             />
           </div>
+          </div>
+
+
         </div>
+        
+
       </div>
 
       <div className="bg-white rounded-lg shadow p-6 mb-6">
