@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { useNavigate ,Link} from "react-router-dom";
 const CartManagement = () => {
   const { cartItems, setCartItems,loading } = useContext(CartContext);
+  const navigate=useNavigate();
   const { showSuccess } = useToast();
   const [error, setError] = useState(null);
     const getUserDetails = async () => {
@@ -33,9 +34,7 @@ const CartManagement = () => {
   // In real app, get from auth context
   const API_URL = 'http://localhost:5000/api';
 
-  useEffect(() => {
-    console.log("Updated Cart  da pnda Items:", cartItems);
-  }, [cartItems]);
+  
 
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -78,40 +77,45 @@ const CartManagement = () => {
   }
 
   return (
+
+    <>
+    <header className="bg-white shadow-sm sticky top-0 z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center">
+                  <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+                  <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+                </div>
+                
+                <div className="hidden md:flex items-center space-x-8">
+                <Link to="/" className="text-gray-600 hover:text-indigo-600">
+      Home
+    </Link>
+                  <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+      Shop
+    </Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
+                  
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="relative hidden md:block">
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
+                  </div>
+                   <div className="relative" onClick={()=> navigate("/fav")}>
+                                <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                                </div> <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                 
+                </div> 
+              </div>
+            </div>
+          </header>
     <div className="max-w-4xl mx-auto p-6">
 
-<header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
-              <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
-            </div>
-            
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
-              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
-  Shop
-</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-              
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="relative hidden md:block">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
-              </div>
-              <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-              <User className="h-6 w-6 text-gray-600 cursor-pointer" />
-             
-            </div> 
-          </div>
-        </div>
-      </header>
 
       <div className="flex items-center mt-8 gap-2 mb-8">
         <ShoppingCart className="w-6 h-6" />
@@ -214,13 +218,13 @@ const CartManagement = () => {
                 ${calculateTotal().toFixed(2)}
               </span>
             </div>
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+            <button  onClick={()=> navigate("/checkout")} className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
               Proceed to Checkout
             </button>
           </div>
         </div>
       )}
-    </div>
+    </div></>
   );
 };
 

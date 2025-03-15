@@ -3,7 +3,10 @@ import axios from 'axios';
 import { useNavigate ,Link} from "react-router-dom";
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 const ProductListing = () => {
+
+  const{showSuccess}=useToast();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +35,7 @@ const ProductListing = () => {
         userId,
         productId
       });
-      alert("Added to favorites");
+      showSuccess(`Added to favorites`);
     } catch (error) {
       console.error("Error adding favorite", error);
     }

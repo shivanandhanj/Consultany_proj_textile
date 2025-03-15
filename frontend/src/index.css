@@ -9,3 +9,14 @@
   #nprogress .peg {
     box-shadow: 0 0 10px #4f46e5, 0 0 5px #46a5e5;
   }
+
+
+  #canvas {
+    position: fixed;  /* Ensures it stays over all pages */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Cover full viewport width */
+    height: 100vh; /* Cover full viewport height */
+    pointer-events: none; /* Allows clicking through the canvas */
+    z-index: 9999; /* Keeps it on top but does not block clicks */
+  }
