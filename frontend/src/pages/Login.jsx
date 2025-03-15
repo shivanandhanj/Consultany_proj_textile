@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"; 
+import { useToast } from '../context/ToastContext';
 const AuthForms = ({ setIsAuthenticated }) => {
+  const {showSuccess,showError}=useToast()
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,12 +35,13 @@ const AuthForms = ({ setIsAuthenticated }) => {
       const url = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
       const { data } = await axios.post(url, formData);
       console.log('Response:', data.token);
-      alert(isLogin ? 'Login successful!' : 'Registration successful!');
+      showSuccess(isLogin ? 'Login successful!' : 'Registration successful!');
       localStorage.setItem("authToken", data.token);
       setIsAuthenticated(true); 
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      console.error("Error:", err.response?.data || err.message);
+    showError(err.response?.data?.message || "Something went wrong");
     }
   };
 

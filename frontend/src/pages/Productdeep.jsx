@@ -1,11 +1,17 @@
 import React, { useEffect,useState } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import { Star } from 'lucide-react';
 import ProductReviews from './review';
-import {jwtDecode} from "jwt-decode";
+import {jwtDecode} from "jwt-decode"
+
+
 import { useToast } from '../context/ToastContext';
+import { useNavigate ,Link} from "react-router-dom";
 const ProductDetails = () => {
+
+  const navigate=useNavigate();
   const { showSuccess } = useToast();
 const { id } = useParams();
 const [product, setProduct] = useState(null);
@@ -107,20 +113,23 @@ const getUserDetails = async () => {
 
   const addCart=async()=>{
     try{
-      
-      const userId= await getUserDetails();
+    
+  const userId = await getUserDetails();
+ 
 
-      const response = await fetch(`http://localhost:5000/api/carts/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userId,productId:product,quantity, selectedColor,selectedSize}),
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
+  const response = await axios.post("http://localhost:5000/api/carts/add", {
+    userId,
+    productId: product,
+    quantity,
+    selectedColor,
+    selectedSize,
+  });
+ 
+  
+
       showSuccess(`${product.name} added to cart!`);
-      const data = await response.json();
-      console.log("Cart updated:", data);
+     
+      
      
 
     }catch (error) {
@@ -142,7 +151,53 @@ if (!product) return <p>Product not found.</p>;
 
   return (
     <div className="bg-white">
+
+
+<header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+              <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
+              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+  Shop
+</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
+              <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
+              <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
+              
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative hidden md:block">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
+              </div>
+              <div className="relative" onClick={()=> navigate("/fav")}>
+              <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+              </div>
+              <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+              <div className="relative" onClick={() => navigate("/cart")}>
+                <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              </div>
+            </div> 
+          </div>
+        </div>
+      </header>
+
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+
+     
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
           <div className="space-y-4">
@@ -222,6 +277,8 @@ if (!product) return <p>Product not found.</p>;
 
             {/* Select Size */}
             <div>
+              {product.stock>0 && (
+                <>
         <h3 className="text-sm font-medium text-gray-900">Size</h3>
         <div className="mt-2 flex flex-wrap gap-2">
           {availableSizes.map((size) => (
@@ -240,10 +297,14 @@ if (!product) return <p>Product not found.</p>;
             </button>
           ))}
         </div>
+        </>)
+        }
       </div>
 
             {/* Select Color */}
             <div>
+              {product.stock>0 && (
+                <>
         <h3 className="text-sm font-medium text-gray-900 mt-4">Color</h3>
         <div className="mt-2 flex flex-wrap gap-3">
           {availableColors.map((color) => (
@@ -273,10 +334,14 @@ if (!product) return <p>Product not found.</p>;
             </button>
           ))}
         </div>
+        </>)}
       </div>
 
             {/* Quantity */}
             <div>
+
+
+              {product.stock>0 && (<>
         <h3 className="text-sm font-medium text-gray-900 mt-4">Quantity</h3>
         <div className="mt-2 flex items-center">
           <button
@@ -310,6 +375,8 @@ if (!product) return <p>Product not found.</p>;
         {selectedVariant && selectedVariant.stock < 5 && (
           <p className="text-xs text-red-500 mt-1">Only {selectedVariant.stock} left in stock!</p>
         )}
+
+</>)}
       </div>
 
             {/* Add to Cart Button */}

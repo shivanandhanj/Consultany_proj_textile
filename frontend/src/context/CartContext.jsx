@@ -7,10 +7,7 @@ export const CartProvider = ({ children }) => {
   const [userId,setUserId]=useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    console.log("Cart Items daaaUpdated:", cartItems);
-  }, [cartItems]);
-
+ 
 
   const getUserDetails = async () => {
     const token = localStorage.getItem("authToken");
@@ -21,8 +18,7 @@ export const CartProvider = ({ children }) => {
 
     try {
         const decoded = jwtDecode(token);
-        console.log("Decoded Token:", decoded.userId); // Ensure userId exists
-
+        
         if (!decoded.userId) {
             console.error("User ID not found in token");
             return null;

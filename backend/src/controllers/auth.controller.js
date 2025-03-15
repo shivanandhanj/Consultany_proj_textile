@@ -9,7 +9,7 @@ exports.register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already  da pund exists' });
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     // Create new user
@@ -20,27 +20,31 @@ exports.register = async (req, res) => {
     });
     console.log(user.email);
     await user.save();
+   
 
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      a3f4b8c9e5d6a7b2c1d4e9f8g7h6i5j4k3l2m1n0o9p8q7r6s5t4u3v2w1x0y9z8,
+      "a3f4b8c9e5d6a7b2c1d4e9f8g7h6i5j4k3l2m1n0o9p8q7r6s5t4u3v2w1x0y9z8",
       { expiresIn: '24h' }
     );
-
+   
     res.status(201).json({
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        
       }
+      
     });
+   
   } catch (error) {
-    res.status(500).json({ message: 'Error creating user', error: error.message });
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-};
+};   
 
 exports.login = async (req, res) => {
   try {

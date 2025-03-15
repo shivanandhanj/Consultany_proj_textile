@@ -1,13 +1,14 @@
 const Cart=require('../models/cart.model')
 
 const Addcart=async(req,res)=>{
-    console.log("add")
+    console.log("add");
     const {userId,productId,quantity,selectedColor,
         selectedSize}=req.body;
 
     console.log(userId,productId,quantity,selectedColor,
         selectedSize);
-    let cartItems = await Cart.findOne({ userId, productId});
+    let cartItems = await Cart.findOne({ userId, productId,selectedColor,
+        selectedSize});
     if (cartItems) {
         // Update quantity if item exists
         cartItems.quantity += quantity;
@@ -23,6 +24,9 @@ const Addcart=async(req,res)=>{
         });
         await cartItems.save();
     }
+
+    res.status(200).json({ message: "Cart updated successfully", cartItems }); // ✅ Send response
+
 }
 
 const Getcart=async(req,res)=>{

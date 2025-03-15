@@ -9,8 +9,8 @@ import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import Favour from "./pages/Favour" 
 import Profile from "./pages/Profile"
-
-
+import DynamicHeader from './components/Dynamicheader';
+import { ToastProvider } from './context/ToastContext';
 import Layout from "./components/Layout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
@@ -27,8 +27,10 @@ const App = () => {
 
   return (
     
-     
+    <ToastProvider>
+       
     <Routes>
+ 
      
       {/* Public Route */}
       <Route
@@ -92,6 +94,7 @@ const App = () => {
         </Route>
 
     </Routes>
+    </ToastProvider>
 
 
 

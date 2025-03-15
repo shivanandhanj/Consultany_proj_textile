@@ -32,19 +32,19 @@ try {
         });
 
         await order.save();
+       
 
         for (const item of cartItems) {
             const product = await Product.findById(item.productId);
-            if (!product) {
+             if (!product) {
               return res.status(404).json({ error: "Product not found" });
             }
-      
-            // Find the correct variant (size + color match)
             const variant = product.variants.find(
-              (v) => v.size === item.size && v.color === item.color
+              (v) => v.size === item.selectedSize && v.color === item.selectedColor
             );
-      
+            console.log(variant);
             if (!variant) {
+                console.log("variant error");
               return res.status(400).json({ error: "Variant not found" });
             }
       
