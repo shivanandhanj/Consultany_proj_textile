@@ -6,6 +6,7 @@ import { useNavigate ,Link} from "react-router-dom";
 const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
   const { cartItems,userId } = useContext(CartContext);
   const navigate=useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -42,7 +43,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       }
 
       // Create checkout session
-      const sessionResponse = await axios.post('http://localhost:5000/api/order/checkout/', {
+      const sessionResponse = await axios.post(`${API_URL}/api/order/checkout/`, {
         userId, // Get from auth context
         cartItems,
         shippingAddress: shippingDetails
@@ -68,7 +69,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       console.log(2)
 
       // Complete checkout
-      const completeResponse = await axios.post('http://localhost:5000/api/order/checkout/complete/', {
+      const completeResponse = await axios.post(`${API_URL}/api/order/checkout/complete/`, {
         orderId,
         paymentDetails},{
           headers: {

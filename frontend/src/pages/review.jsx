@@ -3,6 +3,8 @@ import axios from "axios";
 import {jwtDecode} from "jwt-decode";
 import { Star } from 'lucide-react';
 const ProductReviews = ({ product }) => {
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const [showForm, setShowForm] = useState(false);
  
   const [reviews, setReviews] = useState(product.reviews || []);
@@ -47,7 +49,7 @@ const ProductReviews = ({ product }) => {
        const id= await getUserDetails();
        
       
-      const response = await axios.post(`http://localhost:5000/api/reviews/${product._id}`, {
+      const response = await axios.post(`${API_URL}/api/reviews/${product._id}`, {
         user:id, // Replace with actual logged-in user ID
         rating,
         comment

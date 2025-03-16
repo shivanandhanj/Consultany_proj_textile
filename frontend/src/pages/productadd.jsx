@@ -6,6 +6,7 @@ const AdminProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
   const [productData, setProductData] = useState({
     name: "",
@@ -52,7 +53,7 @@ const AdminProductForm = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/admin/add/images", {
+      const response = await fetch(`${API_URL}/api/admin/add/images`, {
         method: 'POST',
         body: formData
       });
@@ -108,7 +109,7 @@ const AdminProductForm = () => {
     try {
       const productDataWithImages = { ...productData, images };
   
-      const response = await fetch("http://localhost:5000/api/admin/add", {
+      const response = await fetch(`${API_URL}/api/admin/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productDataWithImages),

@@ -7,6 +7,9 @@ import { useNavigate ,Link} from "react-router-dom";
 const CartManagement = () => {
   const { cartItems, setCartItems,loading } = useContext(CartContext);
   const navigate=useNavigate();
+
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const { showSuccess } = useToast();
   const [error, setError] = useState(null);
     const getUserDetails = async () => {
@@ -32,14 +35,14 @@ const CartManagement = () => {
       }
   };
   // In real app, get from auth context
-  const API_URL = 'http://localhost:5000/api';
+  
 
   
 
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
     try {
-      const response = await axios.put(`${API_URL}/cart/${itemId}`, {
+      const response = await axios.put(`${API_URL}/api//cart/${itemId}`, {
         quantity: newQuantity
       });
       setCartItems(items =>
@@ -54,7 +57,7 @@ const CartManagement = () => {
 
   const removeItem = async (itemId) => {
     try {
-      await axios.delete(`${API_URL}/cart/${itemId}`);
+      await axios.delete(`${API_URL}/api/cart/${itemId}`);
       setCartItems(items => items.filter(item => item._id !== itemId));
     } catch (err) {
       setError('Failed to remove item');

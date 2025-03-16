@@ -6,7 +6,8 @@ export const ProductProvider=({children})=>{
  const[products,setProducts]=useState([]);
  const [loading, setLoading] = useState(true);
  const[error,setError]=useState();
-
+ const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
 
 
 
@@ -16,7 +17,7 @@ export const ProductProvider=({children})=>{
     const fetchProductItems = async () => {
         try {
           setLoading(true);
-          const response = await axios.get('http://localhost:5000/api/products');
+          const response = await axios.get(`${API_URL}/api/products`);
           setProducts(response.data);
           setLoading(false);
         } catch (err) {

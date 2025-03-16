@@ -6,11 +6,16 @@ import { CartContext } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 const ProductListing = () => {
 
+  
+
+
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const{showSuccess}=useToast();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // Search feature
+  const [searchQuery, setSearchQuery] = useState("");
  
   const [filters, setFilters] = useState({
     category: '',
@@ -31,7 +36,7 @@ const ProductListing = () => {
       [productId]: !prev[productId],
     }));
     try {
-      await axios.post('http://localhost:5000/api/fav/add', {
+      await axios.post(`${API_URL}/api/fav/add`, {
         userId,
         productId
       });
@@ -49,7 +54,7 @@ const ProductListing = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/products');
+        const response = await axios.get(`${API_URL}/api/products`);
         setProducts(response.data);
         setLoading(false);
       } catch (err) {
