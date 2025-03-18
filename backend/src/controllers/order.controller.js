@@ -1,11 +1,14 @@
 const Order=require('../models/order.model')
 const Product=require('../models/product.model')
 const Cart=require('../models/cart.model');
+const razorpay=require('../config/razorpay');
 const session=async(req,res)=>{
 
 try {
         const { userId, cartItems, shippingAddress } = req.body;
+        console.log("Received checkout request:", req.body); // Debugging
 
+        
         const validatedItems = await Promise.all(cartItems.map(async (item) => {
             const product = await Product.findById(item.productId);
             if (!product || product.stockQuantity < item.quantity) {
@@ -14,24 +17,42 @@ try {
             return {
                 productId: item.productId,
                 quantity: item.quantity,
-                price: product.price
+                price: product.price,
+                selectedColor: item.selectedColor,
+                selectedSize:item.selectedSize
+
             };
         }));
 
-        // Calculate total
-        const totalAmount = validatedItems.reduce((sum, item) => 
+        const totalAmount =await validatedItems.reduce((sum, item) => 
             sum + (item.price * item.quantity), 0);
 
+        const options = {
+            amount: totalAmount * 100, // Amount in paise
+            currency: "INR",
+            receipt: `receipt_${Date.now()}`,
+            payment_capture: 1 
+        };
+        const razorpayOrder = await razorpay.orders.create(options);
+
+
+
+        // Calculate total
+        
+
         // Create order
-        const order = new Order({
+        const newOrder = new Order({
             userId,
             items: validatedItems,
             shippingAddress,
             totalAmount,    
-            status: 'pending'
+             paymentDetails: {
+                orderId: razorpayOrder.id,
+                status: "pending"
+            }
         });
 
-        await order.save();
+        const savedOrder= await newOrder.save();
        
 
         for (const item of cartItems) {
@@ -66,11 +87,8 @@ try {
 
         
 
-        res.json({
-            orderId: order._id,
-            totalAmount,
-            success: true
-        });
+        res.json({ success: true, razorpayOrder, savedOrder });
+
     } catch (error) {
         
         res.status(400).json({
@@ -90,9 +108,9 @@ const checkout=async(req,res)=>{
         }
 
         // Update order with payment details
-        order.paymentDetails = paymentDetails;
-        order.status = 'processing';
-        await order.save();
+        // order.paymentDetails = paymentDetails;
+        // order.status = 'processing';
+        // await order.save();
 
         // Update product stock
         await Promise.all(order.items.map(async (item) => {
@@ -115,4 +133,22 @@ const checkout=async(req,res)=>{
 
 }
 
-module.exports={session,checkout};
+const getAllOrders=async(req,res)=>{
+    try{
+
+        const result=await Order.find()
+        .populate("userId" ,"name email")
+        .populate("items.productId","name price images")
+        .exec();
+        res.status(200).json({
+            success:true,
+            data:result
+        });
+
+    }catch(error){res.status(400).json({
+        success:false,
+        message:error.message
+    })};
+}
+
+module.exports={session,checkout,getAllOrders};

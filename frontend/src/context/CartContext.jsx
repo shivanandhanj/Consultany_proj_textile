@@ -8,7 +8,8 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
  
-
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const getUserDetails = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -31,7 +32,7 @@ export const CartProvider = ({ children }) => {
     }
 };
 // In real app, get from auth context
-const API_URL = 'http://localhost:5000/api';
+
 
 useEffect(() => {
   fetchCartItems();
@@ -41,7 +42,7 @@ useEffect(() => {
 const fetchCartItems = async () => {
   try {
     const userId=await getUserDetails();
-    const response = await axios.get(`${API_URL}/cart/${userId}`);
+    const response = await axios.get(`${API_URL}/api//cart/${userId}`);
     setCartItems(response.data);
     setError(null);
   } catch (err) {

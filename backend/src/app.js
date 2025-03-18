@@ -1,6 +1,6 @@
-require('dotenv').config();
+
 const express = require('express');
-const mongoose = require('mongoose');
+
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const product=require('./routes/product.routes');
@@ -9,6 +9,9 @@ const addProd=require('./routes/addproduct.routes');
 const cart=require('./routes/cart.routes');
 const Order=require('./routes/order.routes')
 const Fav=require('./routes/fav.routes');
+const mongoose=require('./config/database');
+const razorpay=require('./config/razorpay');
+const payment=require('./routes/payment.routes');
 const app = express();
 
 app.use(cors());
@@ -20,17 +23,9 @@ app.use('/api/admin',addProd);
 app.use('/api',cart);
 app.use('/api',Order);
 app.use('/api',Fav);
+app.use('/api/payment',payment);
 
-MONGODB_URI="mongodb+srv://shivanandhanj22cse:nanzu_05@cluster0.qcf0s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-mongoose.connect(MONGODB_URI)
-  .then(() => {console.log('Connected to MongoDB')
-    
-  })
-  .catch(err => console.error('MongoDB connection error:', err));
-
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

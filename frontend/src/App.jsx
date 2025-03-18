@@ -17,6 +17,7 @@ import Products from "./pages/admin/Products";
 import Customers from "./pages/admin/Customers";
 import Orders from "./pages/admin/Orders";
 import Inventory from "./pages/admin/Inventory";
+import Payment from "./pages/payment";
 import { Sidebar } from "lucide-react";
 
 
@@ -76,6 +77,12 @@ const App = () => {
       <Route
       path="/checkout"
       element = {<Checkout
+        
+      />}
+      />
+       <Route
+      path="/pay"
+      element = {<Payment
         
       />}
       />

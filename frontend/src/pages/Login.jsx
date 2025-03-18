@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom"; 
 import { useToast } from '../context/ToastContext';
 const AuthForms = ({ setIsAuthenticated }) => {
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const {showSuccess,showError}=useToast()
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +34,7 @@ const AuthForms = ({ setIsAuthenticated }) => {
     }
 
     try {
-      const url = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+      const url = isLogin ? `${API_URL}/api/auth/login` : `${API_URL}/api/auth/register`;
       const { data } = await axios.post(url, formData);
       console.log('Response:', data.token);
       showSuccess(isLogin ? 'Login successful!' : 'Registration successful!');

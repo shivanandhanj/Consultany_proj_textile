@@ -1,45 +1,69 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Minus, Plus, X, ShoppingCart,Search, Menu, Heart, User} from 'lucide-react';
-import { CartContext } from '../context/CartContext';
-import { useToast } from '../context/ToastContext';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate ,Link} from "react-router-dom";
 const CartManagement = () => {
-  const { cartItems, setCartItems,loading } = useContext(CartContext);
+  const [ cartItems, setCartItems ] = useState([]);
+ 
+  const[userId,setUserId]=useState(null);
   const navigate=useNavigate();
-  const { showSuccess } = useToast();
+  const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
+  
   const [error, setError] = useState(null);
-    const getUserDetails = async () => {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-          console.error("Token not found");
-          return null;
-      }
-  
-      try {
-          const decoded = jwtDecode(token);
-          console.log("Decoded Token:", decoded.userId); // Ensure userId exists
-  
-          if (!decoded.userId) {
-              console.error("User ID not found in token");
-              return null;
-          }
-  
-          return decoded.userId; // Return user ID instead of fetching name
-      } catch (error) {
-          console.error("Error decoding token:", error);
-          return null;
-      }
-  };
-  // In real app, get from auth context
-  const API_URL = 'http://localhost:5000/api';
 
-  
+    const getUserDetails = async () => {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            console.error("Token not found");
+            return null;
+        }
+    
+        try {
+            const decoded = jwtDecode(token);
+            
+            if (!decoded.userId) {
+                console.error("User ID not found in token");
+                return null;
+            }
+            
+            setUserId(decoded.userId)
+            // return decoded.userId; // Return user ID instead of fetching name
+        } catch (error) {
+            console.error("Error decoding token:", error);
+            return null;
+        }
+    };
+useEffect(()=>{
+  getUserDetails();
+  if(userId)
+  fetchCartItems();
+},[userId]);
+ 
+
+  const fetchCartItems = async () => {
+   
+    try {
+       
+     
+     
+      
+      const response = await axios.get(`${API_URL}/api/cart/${userId}`);
+      setCartItems(response.data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch cart items'+err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
     try {
-      const response = await axios.put(`${API_URL}/cart/${itemId}`, {
+      const response = await axios.put(`${API_URL}/api//cart/${itemId}`, {
         quantity: newQuantity
       });
       setCartItems(items =>
@@ -54,7 +78,7 @@ const CartManagement = () => {
 
   const removeItem = async (itemId) => {
     try {
-      await axios.delete(`${API_URL}/cart/${itemId}`);
+      await axios.delete(`${API_URL}/api/cart/${itemId}`);
       setCartItems(items => items.filter(item => item._id !== itemId));
     } catch (err) {
       setError('Failed to remove item');
@@ -66,6 +90,7 @@ const CartManagement = () => {
       total + (item.productId.price * item.quantity), 0
     );
   };
+  
 
   if (loading) {
     return (

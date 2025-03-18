@@ -7,6 +7,7 @@ import axios from 'axios';
 const FavoritesPage = () => {
   const navigate=useNavigate();
   const{userId}=useContext(CartContext);
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
   const [favorites, setFavorites] = useState([]);
 
@@ -33,7 +34,7 @@ const FavoritesPage = () => {
       const fetchFavorites = async () => {
         try {
          
-          const res = await axios.get(`http://localhost:5000/api/fav/${userId}`);
+          const res = await axios.get(`${API_URL}/api/fav/${userId}`);
           setFavorites(res.data);
           
 

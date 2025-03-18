@@ -10,6 +10,7 @@ const Product = () => {
   const[isDelOpen,setIsDelOpen]=useState(false);
   const navigate = useNavigate();
   const [isEditMode,setMode] =useState(false);
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -137,7 +138,7 @@ const Product = () => {
       setLoading(true);
      
       // Replace with your actual API endpoint
-      const response = await axios.get(`http://localhost:5000/api/admin/update/${id}`);
+      const response = await axios.get(`${API_URL}/api/admin/update/${id}`);
       setProduct(response.data);
       setOriginalProduct(response.data);
       setImages([]);
@@ -201,7 +202,7 @@ const Product = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/admin/add/images", {
+      const response = await fetch(`${API_URL}/api/admin/add/images`, {
         method: 'POST',
         body: formData
       });
@@ -246,7 +247,7 @@ const Product = () => {
     try {
         const productDataWithImages = { ...product, images };
     
-        const response = await fetch("http://localhost:5000/api/admin/add", {
+        const response = await fetch(`${API_URL}/api/admin/add`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(productDataWithImages),
@@ -301,7 +302,7 @@ const Product = () => {
 
       try {
         
-          const response=await axios.put(`http://localhost:5000/api/admin/update/${id}`, updatedFields);
+          const response=await axios.put(`${API_URL}/api/admin/update/${id}`, updatedFields);
           alert("Product updated successfully!");
 
 

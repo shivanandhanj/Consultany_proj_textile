@@ -10,7 +10,8 @@ import {jwtDecode} from "jwt-decode"
 import { useToast } from '../context/ToastContext';
 import { useNavigate ,Link} from "react-router-dom";
 const ProductDetails = () => {
-
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
   const navigate=useNavigate();
   const { showSuccess } = useToast();
 const { id } = useParams();
@@ -25,7 +26,7 @@ const [selectedSize, setSelectedSize] = useState(null);
   useEffect(() => {
     const fetchProduct = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+            const response = await axios.get(`${API_URL}/api/products/${id}`);
             
             setProduct(response.data);
             setLoading(false);
@@ -117,7 +118,7 @@ const getUserDetails = async () => {
   const userId = await getUserDetails();
  
 
-  const response = await axios.post("http://localhost:5000/api/carts/add", {
+  const response = await axios.post(`${API_URL}/api/carts/add`, {
     userId,
     productId: product,
     quantity,
