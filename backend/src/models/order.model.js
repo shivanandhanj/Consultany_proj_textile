@@ -20,9 +20,11 @@ shippingAddress: {
     contact: String,
 },
 paymentDetails: {
+    paymentId: String,
+    orderId: String,
+    signature: String,
     method: String,
-    status: String,
-    transactionId: String
+    status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" }
 },
 totalAmount: Number,
 status: {

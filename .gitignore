@@ -25,6 +25,9 @@ pnpm-debug.log*
 .env.test
 .env.*.local
 
+frontend/.env
+backend/.env
+
 # Build files
 /build
 /dist

@@ -10,6 +10,8 @@ const cart=require('./routes/cart.routes');
 const Order=require('./routes/order.routes')
 const Fav=require('./routes/fav.routes');
 const mongoose=require('./config/database');
+const razorpay=require('./config/razorpay');
+const payment=require('./routes/payment.routes');
 const app = express();
 
 app.use(cors());
@@ -21,6 +23,7 @@ app.use('/api/admin',addProd);
 app.use('/api',cart);
 app.use('/api',Order);
 app.use('/api',Fav);
+app.use('/api/payment',payment);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

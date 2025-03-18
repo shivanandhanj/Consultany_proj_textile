@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import axios from "axios"
-import { CartContext } from '../context/CartContext';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate ,Link} from "react-router-dom";
 const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
-  const { cartItems,userId } = useContext(CartContext);
-  const navigate=useNavigate();
+  const [ cartItems, setCartItems ] = useState([]);
+   const navigate=useNavigate();
   const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
-  
+  const KEY=import.meta.env.VITE_RAZORPAY_KEY_ID;
+  const [userId,setUserId]=useState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [shippingDetails, setShippingDetails] = useState({
@@ -43,7 +44,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       }
 
       // Create checkout session
-      const sessionResponse = await axios.post(`${API_URL}/api/order/checkout/`, {
+      const data = await axios.post(`${API_URL}/api/order/checkout`, {
         userId, // Get from auth context
         cartItems,
         shippingAddress: shippingDetails
@@ -52,14 +53,61 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
           'Content-Type': 'application/json',
         }
       });
-     console.log(1);
 
+
+      const orderId=data.data.savedOrder._id;
+      console.log(orderId)
+     console.log(1);
+     console.log(data);
+    const {id: order_id}=data.data.razorpayOrder;
      
+     const options = {
+      key: KEY,
+      amount: data.data.razorpayOrder.amount,
+      currency: data.data.razorpayOrder.currency,
+      name: "Textile E-Commerce",
+      description: "Order Payment",
+      order_id:order_id,
+      handler: async function (response) {
+        console.log("Razorpay Response:", response); // Debugging
+
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+
+        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            alert("Payment verification failed: Missing details");
+            return;
+        }
+
+        try {
+            const verifyRes = await axios.post(`${API_URL}/api/payment/verify-payment`, {
+                razorpay_payment_id,
+                razorpay_order_id,
+                razorpay_signature
+            });
+
+            console.log("Payment Verification Response:", verifyRes.data);
+            alert("Payment Successful!");
+        } catch (err) {
+            console.error("Payment Verification Error:", err.response ? err.response.data : err.message);
+            alert("Payment Verification Failed");
+        }
+      },
+      prefill: {
+          name: "John Doe",
+          email: "john@example.com",
+          contact: "9999999999"
+      },
+      theme: { color: "#3399cc" }
+  };
+
+  const rzp = new window.Razorpay(options);
+  rzp.open();
 
       
 
-      const { orderId, totalAmount } = sessionResponse.data;
-
+      
+       
+       
       // Simulate payment process (replace with actual payment gateway)
       const paymentDetails = {
         method: 'credit_card',
@@ -71,16 +119,12 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       // Complete checkout
       const completeResponse = await axios.post(`${API_URL}/api/order/checkout/complete/`, {
         orderId,
-        paymentDetails},{
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
+        paymentDetails}
         
       );
-      console.log(3)
-
      
+
+     console.log(3);
 
 
       const orderData = await completeResponse.data;
@@ -91,6 +135,8 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
     } catch (err) {
       setError(err.message);
       onError(err.message);
+      console.error("Payment error:", err);
+      setPaymentStatus("Payment Failed");
     } finally {
       setLoading(false);
     }
@@ -107,6 +153,44 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       </div>
     );
   }
+  const getUserDetails=async()=>{
+     const token = localStorage.getItem("authToken");
+            if (!token) {
+                console.error("Token not found");
+                return null;
+            }
+        
+            try {
+                const decoded = jwtDecode(token);
+                
+                if (!decoded.userId) {
+                    console.error("User ID not found in token");
+                    return null;
+                }
+                
+               setUserId(decoded.userId);
+                return decoded.userId; // Return user ID instead of fetching name
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                return null;
+            }
+  }
+  const fetchCartItems=async()=>{
+    try{
+      const userId=await getUserDetails();
+      const response = await axios.get(`${API_URL}/api/cart/${userId}`);
+      setCartItems(response.data);
+      setError(null);
+    }catch(err){
+      setError('Failed to fetch cart items'+err);
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  useEffect(()=>{
+    fetchCartItems();
+  },[])
 
   return (
     
