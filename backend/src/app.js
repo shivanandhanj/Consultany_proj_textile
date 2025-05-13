@@ -1,6 +1,7 @@
 
-const express = require('express');
+require('dotenv').config(); 
 
+const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const product=require('./routes/product.routes');
@@ -10,7 +11,7 @@ const cart=require('./routes/cart.routes');
 const Order=require('./routes/order.routes')
 const Fav=require('./routes/fav.routes');
 const mongoose=require('./config/database');
-const razorpay=require('./config/razorpay');
+const User=require('./routes/user.routes')
 const payment=require('./routes/payment.routes');
 const app = express();
 
@@ -23,7 +24,10 @@ app.use('/api/admin',addProd);
 app.use('/api',cart);
 app.use('/api',Order);
 app.use('/api',Fav);
+app.use('/api/user',User);
 app.use('/api/payment',payment);
+
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

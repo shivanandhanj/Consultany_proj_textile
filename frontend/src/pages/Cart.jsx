@@ -63,7 +63,7 @@ useEffect(()=>{
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
     try {
-      const response = await axios.put(`${API_URL}/api//cart/${itemId}`, {
+      const response = await axios.put(`${API_URL}/api/cart/${itemId}`, {
         quantity: newQuantity
       });
       setCartItems(items =>

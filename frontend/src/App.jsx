@@ -6,9 +6,10 @@ import ProductListing from "./pages/ProductDetails"
 import Productdeep from "./pages/Productdeep"
 import AddProductForm from "./pages/productadd"
 import Cart from "./pages/Cart"
-import Checkout from "./pages/Checkout"
+import Checkout from "./pages/Checkout1"
 import Favour from "./pages/Favour" 
 import Profile from "./pages/Profile"
+import Pro from "./pages/pro"
 import DynamicHeader from './components/Dynamicheader';
 import { ToastProvider } from './context/ToastContext';
 import Layout from "./components/Layout";
@@ -18,7 +19,6 @@ import Customers from "./pages/admin/Customers";
 import Orders from "./pages/admin/Orders";
 import Inventory from "./pages/admin/Inventory";
 import Payment from "./pages/payment";
-import { Sidebar } from "lucide-react";
 
 
 const App = () => {
@@ -63,14 +63,18 @@ const App = () => {
       path="/cart"
       element = {<Cart/>}
       />
-       <Route
+     
+
+<Route
       path="/profile"
-      element = {<Profile/>}
+      element = {<Pro/>}
       />
        <Route
       path="/fav"
       element = {<Favour/>}
       />
+
+
 
 
 

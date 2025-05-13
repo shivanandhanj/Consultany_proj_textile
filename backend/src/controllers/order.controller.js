@@ -33,6 +33,7 @@ try {
             receipt: `receipt_${Date.now()}`,
             payment_capture: 1 
         };
+        console.log(1);
         const razorpayOrder = await razorpay.orders.create(options);
 
 
@@ -51,6 +52,7 @@ try {
                 status: "pending"
             }
         });
+         console.log(2);
 
         const savedOrder= await newOrder.save();
        
@@ -85,7 +87,7 @@ try {
         // Clear cart after successful order creation
         await Cart.deleteMany({ userId });
 
-        
+         console.log(3);
 
         res.json({ success: true, razorpayOrder, savedOrder });
 
@@ -101,6 +103,8 @@ try {
 const checkout=async(req,res)=>{
     try {
         const { orderId, paymentDetails } = req.body;
+        console.log("complete checkout B");
+        console.log(orderId,paymentDetails);
 
         const order = await Order.findById(orderId);
         if (!order) {
@@ -109,16 +113,16 @@ const checkout=async(req,res)=>{
 
         // Update order with payment details
         // order.paymentDetails = paymentDetails;
-        // order.status = 'processing';
-        // await order.save();
+        order.status = 'completed';
+        await order.save();
 
         // Update product stock
-        await Promise.all(order.items.map(async (item) => {
-            await Product.findByIdAndUpdate(
-                item.productId,
-                { $inc: { stockQuantity: -item.quantity } }
-            );
-        }));
+        // await Promise.all(order.items.map(async (item) => {
+        //     await Product.findByIdAndUpdate(
+        //         item.productId,
+        //         { $inc: { stockQuantity: -item.quantity } }
+        //     );
+        // }));
 
         res.json({
             success: true,

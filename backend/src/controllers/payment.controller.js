@@ -3,6 +3,9 @@ const razorpay=require('../config/razorpay');
 const crypto = require('crypto');
 const orderPayment=async(req,res)=>{
     try {
+       
+        console.log(body);
+        console.log('bakend orderPayment got received')
         const { amount, currency = 'INR', receipt = 'receipt_order_' + Date.now() } = req.body;
         
         const options = {
@@ -24,6 +27,7 @@ const orderPayment=async(req,res)=>{
 const verifyPayment=async(req,res)=>{
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
     console.log(req.body);
+    
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)

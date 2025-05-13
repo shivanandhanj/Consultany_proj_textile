@@ -14,11 +14,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     
       <CartProvider>
       <PageLoader />
-      
+     
+
 
       <ProductProvider>
 
-        <UseCanvasCursor/>
+        {/* <UseCanvasCursor/> */}
         <App />
       
         </ProductProvider>

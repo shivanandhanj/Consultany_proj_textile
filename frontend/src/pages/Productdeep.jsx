@@ -5,16 +5,13 @@ import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import { Star } from 'lucide-react';
 import ProductReviews from './review';
 import {jwtDecode} from "jwt-decode"
+import TShirtViewer from '../components/Tshirt';
 
 
 import { useToast } from '../context/ToastContext';
 import { useNavigate ,Link} from "react-router-dom";
 const ProductDetails = () => {
-  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
-  const navigate=useNavigate();
-  const { showSuccess } = useToast();
-const { id } = useParams();
 const [product, setProduct] = useState(null);
 const [loading, setLoading] = useState(true);
 const [selectedSize, setSelectedSize] = useState(null);
@@ -22,6 +19,13 @@ const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(0);
   const [showReviews, setShowReviews] = useState(false);
+  const [show3D, setShow3D] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
+  
+  const navigate=useNavigate();
+  const { showSuccess } = useToast();
+const { id } = useParams();
  
   useEffect(() => {
     const fetchProduct = async () => {
@@ -202,29 +206,44 @@ if (!product) return <p>Product not found.</p>;
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="aspect-w-3 aspect-h-4 rounded-lg overflow-hidden bg-gray-100">
-              <img 
-                src={product.images[mainImage]} 
-                alt={product.name} 
-                className="w-full h-full object-center object-cover"
-              />
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {product.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setMainImage(index)}
-                  className={`relative aspect-w-1 aspect-h-1 rounded-md overflow-hidden ${mainImage === index ? 'ring-2 ring-indigo-500' : 'ring-1 ring-gray-200'}`}
-                >
-                  <img 
-                    src={image} 
-                    alt={`Product thumbnail ${index + 1}`} 
-                    className="w-full h-full object-center object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
+      <div
+        className="aspect-w-3 aspect-h-4 rounded-lg overflow-hidden bg-gray-100 cursor-pointer"
+        onClick={() => setShow3D(true)}
+      >
+        <img
+          src={product.images[mainImage]}
+          alt={product.name}
+          className="w-full h-full object-center object-cover"
+        />
+      </div>
+
+      <div className="grid grid-cols-4 gap-2">
+        {product.images.map((image, index) => (
+          <button
+            key={index}
+            onClick={() => setMainImage(index)}
+            className={`relative aspect-w-1 aspect-h-1 rounded-md overflow-hidden ${
+              mainImage === index
+                ? 'ring-2 ring-indigo-500'
+                : 'ring-1 ring-gray-200'
+            }`}
+          >
+            <img
+              src={image}
+              alt={`Product thumbnail ${index + 1}`}
+              className="w-full h-full object-center object-cover"
+            />
+          </button>
+        ))}
+      </div>
+
+      {show3D && (
+        <TShirtViewer
+          textureUrl={product.images[mainImage]}
+          onClose={() => setShow3D(false)}
+        />
+      )}
+    </div>
 
           {/* Product Info */}
           <div className="space-y-6">
