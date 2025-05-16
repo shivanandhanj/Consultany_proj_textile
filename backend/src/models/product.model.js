@@ -15,7 +15,12 @@ const productSchema = new mongoose.Schema(
             
           },
           
-        color: { type: [String],  },
+        color_variants: [
+            {
+              color: { type: String, required: true },
+              images: { type: [String], required: true } // Images for that color
+            }
+          ],
         variants: [
             {
               size: {

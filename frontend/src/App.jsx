@@ -8,7 +8,7 @@ import AddProductForm from "./pages/productadd"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout1"
 import Favour from "./pages/Favour" 
-import Profile from "./pages/Profile"
+import  Category from "./pages/Category";
 import Pro from "./pages/pro"
 import DynamicHeader from './components/Dynamicheader';
 import { ToastProvider } from './context/ToastContext';
@@ -19,7 +19,7 @@ import Customers from "./pages/admin/Customers";
 import Orders from "./pages/admin/Orders";
 import Inventory from "./pages/admin/Inventory";
 import Payment from "./pages/payment";
-
+import Contact from "./pages/Contact"
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -73,6 +73,15 @@ const App = () => {
       path="/fav"
       element = {<Favour/>}
       />
+       <Route
+      path="/cont"
+      element = {<Contact/>}
+      />
+
+       <Route
+      path="/cat"
+      element = {<Category/>}
+      />
 
 
 
@@ -89,7 +98,9 @@ const App = () => {
       element = {<Payment
         
       />}
+      
       />
+      
 
 
       {/* Catch all unmatched routes */}

@@ -20,6 +20,8 @@ const [selectedSize, setSelectedSize] = useState(null);
   const [mainImage, setMainImage] = useState(0);
   const [showReviews, setShowReviews] = useState(false);
   const [show3D, setShow3D] = useState(false);
+  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
+
 
   const API_URL = import.meta.env.VITE_API_URL; // Use import.meta.env for Vite environment variables
   
@@ -31,8 +33,30 @@ const { id } = useParams();
     const fetchProduct = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/products/${id}`);
-            
+            const product = response.data;
+
             setProduct(response.data);
+      //        if (fetchedProduct.color_variants?.length > 0) {
+      //   setSelectedColor(fetchedProduct.color_variants[0].color);
+      // }
+
+  //     const availableVariants = product?.variants?.filter(variant => variant.stock > 0) || [];
+  // const availableSizes = [...new Set(availableVariants.map(variant => variant.size))];
+  //           handleSizeSelect(availableSizes[0]);
+
+             const availableVariants = product?.variants?.filter(variant => variant.stock > 0) || [];
+    const availableSizes = [...new Set(availableVariants.map(variant => variant.size))];
+
+    if (availableSizes.length > 0) {
+      const firstSize = availableSizes[0];
+      setSelectedSize(firstSize);
+
+      const firstColor = availableVariants.find(v => v.size === firstSize)?.color;
+      if (firstColor) {
+        setSelectedColor(firstColor);
+      }
+    }
+            
             setLoading(false);
         } catch (error) {
             console.error("Error fetching product:", error);
@@ -53,7 +77,11 @@ const { id } = useParams();
   // Ensure selected size & color are valid
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    setSelectedColor(null); // Reset color when size changes
+     const colorForSize = availableVariants.find(variant => variant.size === size)?.color;
+
+  setSelectedColor(colorForSize || null); // Set first color of that size
+  setQuantity(1);
+  setMainImage(0); // Reset color when size changes
     setQuantity(1);
   };
 
@@ -61,6 +89,12 @@ const { id } = useParams();
     setSelectedColor(color);
     setQuantity(1);
   };
+
+
+  const selectedColorVariant = product?.color_variants?.find(
+  (variant) => variant.color === selectedColor
+);
+const colorImages = selectedColorVariant?.images || [];
 
   // Find stock for selected variant
   const selectedVariant = availableVariants.find(variant => variant.size === selectedSize && variant.color === selectedColor);
@@ -77,6 +111,8 @@ const { id } = useParams();
       />
     ));
   };
+
+  
 
   const getAverageRating = () => {
     if (!product.reviews?.length) return 0;
@@ -152,6 +188,7 @@ const getUserDetails = async () => {
   }
 if (!product) return <p>Product not found.</p>;
 
+
   
 
   return (
@@ -211,31 +248,31 @@ if (!product) return <p>Product not found.</p>;
         onClick={() => setShow3D(true)}
       >
         <img
-          src={product.images[mainImage]}
-          alt={product.name}
-          className="w-full h-full object-center object-cover"
-        />
+  src={colorImages[mainImage]}
+  alt={`Main product in ${selectedColor}`}
+  className="w-full h-auto object-cover rounded-md"
+/>
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
-        {product.images.map((image, index) => (
-          <button
-            key={index}
-            onClick={() => setMainImage(index)}
-            className={`relative aspect-w-1 aspect-h-1 rounded-md overflow-hidden ${
-              mainImage === index
-                ? 'ring-2 ring-indigo-500'
-                : 'ring-1 ring-gray-200'
-            }`}
-          >
-            <img
-              src={image}
-              alt={`Product thumbnail ${index + 1}`}
-              className="w-full h-full object-center object-cover"
-            />
-          </button>
-        ))}
-      </div>
+
+<div className="grid grid-cols-4 gap-2 mt-4">
+  {colorImages.map((image, index) => (
+    <button
+      key={index}
+      onClick={() => setMainImage(index)}
+      className={`relative aspect-w-1 aspect-h-1 rounded-md overflow-hidden ${
+        mainImage === index ? 'ring-2 ring-indigo-500' : 'ring-1 ring-gray-200'
+      }`}
+    >
+      <img
+        src={image}
+        alt={`Product thumbnail ${index + 1}`}
+        className="w-full h-full object-center object-cover"
+      />
+    </button>
+  ))}
+</div>
+
 
       {show3D && (
         <TShirtViewer
@@ -322,7 +359,7 @@ if (!product) return <p>Product not found.</p>;
       </div>
 
             {/* Select Color */}
-            <div>
+            <div>   
               {product.stock>0 && (
                 <>
         <h3 className="text-sm font-medium text-gray-900 mt-4">Color</h3>

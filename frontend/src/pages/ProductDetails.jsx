@@ -55,6 +55,8 @@ const ProductListing = () => {
       try {
         setLoading(true);
         const response = await axios.get(`${API_URL}/api/products`);
+
+        console.log(response.data)
         setProducts(response.data);
         setLoading(false);
       } catch (err) {
@@ -63,8 +65,27 @@ const ProductListing = () => {
       }
     };
 
-    fetchProducts();
-  }, []);
+    const fetchFavorites = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/fav/${userId}`);
+        const favoriteProductIds = res.data.map(prod => prod._id); // or just `res.data` if only IDs returned
+      const favMap = {};
+      favoriteProductIds.forEach(id => {
+        favMap[id] = true;
+      });
+      setFavorites(favMap);
+    } catch (err) {
+      console.error("Error fetching user favorites", err);
+    }
+  };
+   fetchProducts();
+  if (userId) {
+    fetchFavorites();
+  }
+
+   
+  }, [userId]);
+  
 
   // Handle filter changes
   const handleFilterChange = (e) => {
@@ -77,7 +98,7 @@ const ProductListing = () => {
   const navigate = useNavigate();
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-  };
+  };  
 
   // Filter products based on selected filters
   const filteredProducts = products.filter(product => {
@@ -89,8 +110,13 @@ const ProductListing = () => {
     if (filters.subcategory && product.subcategory !== filters.subcategory) matches = false;
     if (filters.brand && product.brand !== filters.brand) matches = false;
     if (filters.size && !product.size.includes(filters.size)) matches = false;
-    if (filters.color && !product.color.includes(filters.color)) matches = false;
-    
+    if (filters.color) {
+    const hasColor = product.color_variants?.some(
+      variant => variant.color.toLowerCase() === filters.color.toLowerCase()
+    );
+    if (!hasColor) matches = false;
+  }
+
     if (filters.priceRange) {
       const [min, max] = filters.priceRange.split('-').map(Number);
       if (product.discount_price < min || product.discount_price > max) matches = false;
@@ -368,7 +394,19 @@ const ProductListing = () => {
             No products found matching your filters.
           </div>
         ) : (
-          filteredProducts.map(product => (
+          filteredProducts.map(product => { 
+            const matchedColorVariant = filters.color
+    ? product.color_variants?.find(variant => variant.color.toLowerCase() === filters.color.toLowerCase())
+    : product.color_variants?.[0]; // Default to first variant if no filter
+
+  const imageUrl = matchedColorVariant?.images?.[0] || product.images[0];
+
+            
+            return( 
+
+
+            
+
             <div key={product._id} onClick={()=>{navigate(`/product/${product._id}`)}}className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="relative pb-[100%]">
               <button
@@ -383,7 +421,7 @@ const ProductListing = () => {
        
       </button>
                 <img 
-                  src={product.images[0]} 
+                  src={imageUrl} 
                   alt={product.name}
                   className="absolute top-0 left-0 w-full h-full object-cover"
                 />
@@ -438,7 +476,8 @@ const ProductListing = () => {
                 </div>
               </div>
             </div>
-          ))
+          )})
+        
         )}
       </div>
     </div>
