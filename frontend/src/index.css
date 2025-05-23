@@ -20,3 +20,6 @@
     pointer-events: none; /* Allows clicking through the canvas */
     z-index: 9999; /* Keeps it on top but does not block clicks */
   }
+
+  
+  

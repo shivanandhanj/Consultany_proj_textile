@@ -4,6 +4,7 @@ import { useNavigate ,Link} from "react-router-dom";
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import LogoutButton from '../components/LogoutButton';
 const ProductListing = () => {
 
   
@@ -159,12 +160,17 @@ const ProductListing = () => {
                <Link to="/" className="text-gray-600 hover:text-indigo-600">
   Home
 </Link> 
-              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
-  Shop
-</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
-              
+                   
+<Link to="/category" className="text-gray-600 hover:text-indigo-600">
+  Category
+</Link>   
+
+<Link to="/about" className="text-gray-600 hover:text-indigo-600">
+  About
+</Link> 
+<Link to="/contact" className="text-gray-600 hover:text-indigo-600">
+  Contact
+</Link> 
             </div>
             
             <div className="flex items-center space-x-4">
@@ -180,11 +186,15 @@ const ProductListing = () => {
               </div>
                <div className="relative" onClick={()=> navigate("/fav")}>
                             <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                            </div> <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                            </div>
+                 <div className="relative" onClick={()=> navigate("/profile")}>           
+               <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+               </div> 
               <div className="relative" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                {/* <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span> */}
               </div>
+              <div><LogoutButton /></div>
             </div> 
           </div>
         </div>
@@ -411,10 +421,10 @@ const ProductListing = () => {
               <div className="relative pb-[100%]">
               <button
          onClick={(e) => toggleFavorite(e, product._id)}
-        className="absolute top-2 right-2 bg-transparent  rounded-full p-1 z-10 shadow-md hover:scale-110 transition"
+        className="absolute top-2 right-2   rounded-full p-1 z-1 shadow-md hover:scale-110 transition"
       >
         <Heart 
-          className="h-6 w-6 transition"
+          className="h-6 w-6"
           fill={favorites[product._id] ? "red" : "none"} // Fill red if favorite
           stroke={favorites[product._id] ? "red" : "gray"}  // Keeps the outline visible
         />

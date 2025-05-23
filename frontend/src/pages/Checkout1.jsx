@@ -3,6 +3,7 @@ import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import axios from "axios"
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate ,Link} from "react-router-dom";
+import LogoutButton from '../components/LogoutButton';
 const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
   const [cartItems, setCartItems] = useState([]);
   const [userId, setUserId] = useState();
@@ -112,6 +113,10 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               setStep('confirmation');
               setPaymentStatus("Payment Successful");
               onComplete(orderData);
+               setTimeout(() => {
+      navigate('/shop');
+    }, 1000);
+
             } catch (err) {
               console.error("Order completion error:", err);
               setError(err.message);
@@ -121,7 +126,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               setLoading(false);
             }
             
-            alert("Payment Successful!");
+            
           } catch (err) {
             console.error("Payment Verification Error:", err.response ? err.response.data : err.message);
             alert("Payment Verification Failed");
@@ -200,6 +205,8 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
     try{
       const userId=await getUserDetails();
       const response = await axios.get(`${API_URL}/api/cart/${userId}`);
+      const shippingdata=await axios.get(`${API_URL}/api/user/${userId}/shipping-details`);
+      setShippingDetails(shippingdata.data);
       setCartItems(response.data);
       setError(null);
     }catch(err){
@@ -218,43 +225,47 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
 
 
     <><header className="bg-white shadow-sm sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
-            <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
-            <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
-              Shop
-            </Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
-
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="relative hidden md:block">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-              <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center">
+                  <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+                  <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+                </div>
+                
+                <div className="hidden md:flex items-center space-x-8">
+                   <Link to="/" className="text-gray-600 hover:text-indigo-600">
+      Home
+    </Link> 
+                       
+    <Link to="/category" className="text-gray-600 hover:text-indigo-600">
+      Category
+    </Link>   
+    
+    <Link to="/about" className="text-gray-600 hover:text-indigo-600">
+      About
+    </Link> 
+    <Link to="/contact" className="text-gray-600 hover:text-indigo-600">
+      Contact
+    </Link> 
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  
+                   <div className="relative" onClick={()=> navigate("/fav")}>
+                                <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                                </div>
+                     <div className="relative" onClick={()=> navigate("/profile")}>           
+                   <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                   </div> 
+                  <div className="relative" onClick={() => navigate("/cart")}>
+                    <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                    {/* <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span> */}
+                  </div>
+                  <div><LogoutButton /></div>
+                </div> 
+              </div>
             </div>
-            <div className="relative" onClick={() => navigate("/fav")}>
-              <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-            </div>
-            <User className="h-6 w-6 text-gray-600 cursor-pointer" />
-            <div className="relative" onClick={() => navigate("/cart")}>
-              <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
-              <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header><div className="max-w-4xl mx-auto p-6">
+          </header><div className="max-w-4xl mx-auto p-6">
 
 
         <h1 className="text-2xl font-bold mb-6">Checkout</h1>
@@ -415,7 +426,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
+                  State
                 </label>
                 <input
                   type="text"

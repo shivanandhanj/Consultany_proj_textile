@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Minus, Plus, X, ShoppingCart,Search, Menu, Heart, User} from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate ,Link} from "react-router-dom";
+import LogoutButton from '../components/LogoutButton';
 const CartManagement = () => {
   const [ cartItems, setCartItems ] = useState([]);
  
@@ -118,22 +119,24 @@ useEffect(()=>{
     </Link>
                   <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
       Shop
-    </Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-                  
+    </Link>   
+    <Link to="/about" className="text-gray-600 hover:text-indigo-600">
+      About
+    </Link>   
+
+     <Link to="/category" className="text-gray-600 hover:text-indigo-600">
+      Category
+    </Link>         
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="relative hidden md:block">
-                    <input
-                      type="text"
-                      placeholder="Search products..."
-                      className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
-                  </div>
+                  
                    <div className="relative" onClick={()=> navigate("/fav")}>
                                 <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                                </div> <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                                </div> <div className="relative" onClick={()=> navigate("/profile")}>
+                                              <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                                              </div>
+                                              <div> <LogoutButton /></div>
                  
                 </div> 
               </div>

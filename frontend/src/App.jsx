@@ -9,8 +9,8 @@ import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout1"
 import Favour from "./pages/Favour" 
 import  Category from "./pages/Category";
-import Pro from "./pages/pro"
-import DynamicHeader from './components/Dynamicheader';
+import Profile from "./pages/pro";
+
 import { ToastProvider } from './context/ToastContext';
 import Layout from "./components/Layout";
 import Dashboard from "./pages/admin/Dashboard";
@@ -20,7 +20,7 @@ import Orders from "./pages/admin/Orders";
 import Inventory from "./pages/admin/Inventory";
 import Payment from "./pages/payment";
 import Contact from "./pages/Contact"
-
+import About from "./pages/about";
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("authToken") !== null // Check if token exists
@@ -67,19 +67,23 @@ const App = () => {
 
 <Route
       path="/profile"
-      element = {<Pro/>}
+      element = {<Profile/>}
       />
        <Route
       path="/fav"
       element = {<Favour/>}
       />
+      <Route
+      path="/about"
+      element = {<About/>}
+      />
        <Route
-      path="/cont"
+      path="/contact"
       element = {<Contact/>}
       />
 
        <Route
-      path="/cat"
+      path="/category"
       element = {<Category/>}
       />
 

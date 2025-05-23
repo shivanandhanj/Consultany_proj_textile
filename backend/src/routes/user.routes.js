@@ -6,4 +6,5 @@ router.get('/Id/:userId',userController.getOrdersByUserId);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+router.get('/:id/shipping-details',userController.getShipping);
 module.exports = router;

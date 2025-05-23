@@ -2,49 +2,56 @@ import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import { useNavigate ,Link} from "react-router-dom";
+import LogoutButton from '../components/LogoutButton';
 export default function ContactUs() {
   return (
     <div className="bg-white">
-        <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
-              <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
-            </div>
-            
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
-              <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
-  Shop
-</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
-                  
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="relative hidden md:block">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
-              </div>
-              <div className="relative" onClick={()=> navigate("/fav")}>
-              <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-              </div>
-              <User className="h-6 w-6 text-gray-600 cursor-pointer" />
-              <div className="relative" onClick={() => navigate("/cart")}>
-                <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-              </div>
-            </div> 
-          </div>
-        </div>
-      </header>
+         <header className="bg-white shadow-sm sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex justify-between items-center h-16">
+                    <div className="flex items-center">
+                      <Menu className="h-6 w-6 mr-4 cursor-pointer md:hidden" />
+                      <div className="text-2xl font-bold text-indigo-600">TextileHub</div>
+                    </div>
+                    
+                    <div className="hidden md:flex items-center space-x-8">
+        
+                      <Link to="/" className="text-gray-600 hover:text-indigo-600">
+          Home
+        </Link> 
+                      
+                      <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
+          Shop
+        </Link> 
+        
+         <Link to="/category" className="text-gray-600 hover:text-indigo-600">
+              Category
+            </Link>
+                             <Link to="/contact" className="text-gray-600 hover:text-indigo-600">
+                               Contact
+                             </Link>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                     
+                      <div className="relative" onClick={()=> navigate("/fav")}>
+                      <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                      </div>
+                      <div className="relative" onClick={()=> navigate("/profile")}>
+                      <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                      </div>
+                      
+                      <div className="relative" onClick={() => navigate("/cart")}>
+                        <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
+                               </div>
+                       <div> <LogoutButton /></div>
+                    </div> 
+                  </div>
+                </div>
+              </header>
+        
       {/* Hero Section */}
-      <div className="bg-indigo-600 text-white py-5 px-6 text-center">
+      <div className=" relative bg-gradient-to-r from-indigo-500 to-purple-600 py-20 px-6 text-center text-white">
         <h1 className="text-3xl font-bold mb-4">Contact Our Textile Experts</h1>
         <p className="text-lg max-w-2xl mx-auto">
           We're here to assist you with fabric orders, custom designs, bulk inquiries, and anything else you need.

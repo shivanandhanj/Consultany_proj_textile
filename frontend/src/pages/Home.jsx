@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, ShoppingCart, Menu, Heart, User } from 'lucide-react';
 import ShineButton from '../components/Button';
+import LogoutButton from '../components/LogoutButton';
 import { useNavigate ,Link} from "react-router-dom";
 const HomePage = () => {
   const navigate = useNavigate(); 
@@ -17,32 +18,37 @@ const HomePage = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
+              
               <Link to="/productList" className="text-gray-600 hover:text-indigo-600">
   Shop
-</Link> <a href="#" className="text-gray-600 hover:text-indigo-600">Categories</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">About</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">Contact</a>
+</Link> 
+
+ <Link to="/category" className="text-gray-600 hover:text-indigo-600">
+      Category
+    </Link>
+     <Link to="/about" className="text-gray-600 hover:text-indigo-600">
+                       About
+                     </Link>
               
+                  <Link to="/contact" className="text-gray-600 hover:text-indigo-600">
+                       Contact
+                     </Link>
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="relative hidden md:block">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <Search className="absolute right-3 top-2 h-5 w-5 text-gray-400" />
-              </div>
+             
               <div className="relative" onClick={()=> navigate("/fav")}>
               <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
               </div>
+              <div className="relative" onClick={()=> navigate("/profile")}>
               <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+              </div>
+              
               <div className="relative" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-              </div>
+                      </div>
+
+                    <div> <LogoutButton /></div>
             </div> 
           </div>
         </div>

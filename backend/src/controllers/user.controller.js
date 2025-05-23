@@ -54,7 +54,27 @@ exports.getOrdersByUserId = async (req, res) => {
   }
 };
 
+exports.getShipping=async(req,res)=>{
+  try{
+     const user = await User.findById(req.params.id).select('name shippingAddress MobileNumber');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
+    const details = {
+      fullName: user.name,
+      address: user.shippingAddress.address,
+      city: user.shippingAddress.city,
+      postalCode: user.shippingAddress.postalCode,
+      phone: user.MobileNumber,
+      country: 'India', // default/fallback if not stored
+    };
+
+    res.status(200).json(details);
+  }catch(error){
+    res.status(500).json({ error: error.message });
+  }
+}
 
 
 // Read single user by ID
