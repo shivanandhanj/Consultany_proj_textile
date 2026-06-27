@@ -124,9 +124,7 @@ useEffect(()=>{
       About
     </Link>   
 
-     <Link to="/category" className="text-gray-600 hover:text-indigo-600">
-      Category
-    </Link>         
+             
                 </div>
                 
                 <div className="flex items-center space-x-4">
@@ -165,7 +163,12 @@ useEffect(()=>{
           {cartItems.map((item) => (
             <div key={item._id} className="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
               <img
-                src={item.productId.images[0] || '/api/placeholder/100/100'}
+               
+                 src={
+  item.productId.color_variants.find(
+    variant => variant.color === item.selectedColor
+  )?.images[0]
+}  
                 alt={item.productId.name}
                 className="w-24 h-24 object-cover rounded"
               />

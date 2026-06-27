@@ -114,7 +114,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
               setPaymentStatus("Payment Successful");
               onComplete(orderData);
                setTimeout(() => {
-      navigate('/shop');
+      navigate('/productList');
     }, 1000);
 
             } catch (err) {
@@ -237,9 +237,7 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
       Home
     </Link> 
                        
-    <Link to="/category" className="text-gray-600 hover:text-indigo-600">
-      Category
-    </Link>   
+     
     
     <Link to="/about" className="text-gray-600 hover:text-indigo-600">
       About
@@ -277,8 +275,11 @@ const CheckoutPage = ({ onComplete = () => {}, onError = () => {} }) => {
             cartItems.map((item) => (
               <div key={item._id} className="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
                 <img
-                  src={item.productId.images[0] || '/api/placeholder/100/100'}
-                  alt={item.productId.name}
+                 src={
+  item.productId.color_variants.find(
+    variant => variant.color === item.selectedColor
+  )?.images[0]
+}       alt={item.productId.name}
                   className="w-24 h-24 object-cover rounded" />
 
                 <div className="flex-grow">

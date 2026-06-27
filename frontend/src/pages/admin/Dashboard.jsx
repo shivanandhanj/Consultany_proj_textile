@@ -10,9 +10,9 @@ const TextileEcommerceDashboard = () => {
   
   // Mock data for dashboard
   const stats = [
-    { title: "Total Revenue", value: "$284,546.90", change: "+12.3%", icon: <DollarSign className="h-6 w-6" /> },
-    { title: "Total Orders", value: "5,423", change: "+8.1%", icon: <ShoppingBag className="h-6 w-6" /> },
-    { title: "Total Customers", value: "3,752", change: "+5.4%", icon: <Users className="h-6 w-6" /> },
+    { title: "Total Revenue", value: " 24,500", change: "+12.3%", icon: <DollarSign className="h-6 w-6" /> },
+    { title: "Total Orders", value: "100", change: "+8.1%", icon: <ShoppingBag className="h-6 w-6" /> },
+    { title: "Total Customers", value: "20", change: "+5.4%", icon: <Users className="h-6 w-6" /> },
     { title: "Conversion Rate", value: "3.24%", change: "+1.2%", icon: <TrendingUp className="h-6 w-6" /> }
   ];
   

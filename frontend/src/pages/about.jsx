@@ -27,9 +27,7 @@ const AboutPage = () => {
   Shop
 </Link> 
 
- <Link to="/category" className="text-gray-600 hover:text-indigo-600">
-      Category
-    </Link>
+
                      <Link to="/contact" className="text-gray-600 hover:text-indigo-600">
                        Contact
                      </Link>

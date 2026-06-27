@@ -15,14 +15,8 @@ exports.createUser = async (req, res) => {
 // Read all users
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
-      .populate({
-        path: 'orders',
-        populate: {
-          path: 'items.productId', // Populate each product in the items array
-          model: 'Product'
-        }
-      });
+    const users = await User.find();
+     console.log("customer admin")
 
     res.status(200).json(users);
   } catch (error) {
@@ -105,6 +99,7 @@ exports.updateUser = async (req, res) => {
 // Delete user by ID
 exports.deleteUser = async (req, res) => {
   try {
+    console.log("admin delete customer");
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.status(200).json({ message: 'User deleted successfully' });

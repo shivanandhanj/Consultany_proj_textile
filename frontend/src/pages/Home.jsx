@@ -23,9 +23,7 @@ const HomePage = () => {
   Shop
 </Link> 
 
- <Link to="/category" className="text-gray-600 hover:text-indigo-600">
-      Category
-    </Link>
+ 
      <Link to="/about" className="text-gray-600 hover:text-indigo-600">
                        About
                      </Link>

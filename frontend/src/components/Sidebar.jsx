@@ -60,10 +60,9 @@ const Sidebar=()=>{
     { icon: <ShoppingBag size={20} />, label: "Products" ,path: "/admin/products"},
     { icon: <Users size={20} />, label: "Customers" ,path: "/admin/customers"},
     { icon: <Package size={20} />, label: "Orders" ,path: "/admin/orders"},
-    { icon: <Activity size={20} />, label: "Analytics" },
+    { icon: <Activity size={20} />, label: "Analytics", path: "/admin/analytics"},
     { icon: <FileText size={20} />, label: "Inventory",path: "/admin/inventory" },
-    { icon: <BarChart2 size={20} />, label: "Reports" },
-    { icon: <Settings size={20} />, label: "Settings" },
+   
   ].map((item, index) => (
     <div key={index} className="px-4 mb-4 ">
         <Link to={item.path}  >

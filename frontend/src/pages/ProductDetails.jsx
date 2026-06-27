@@ -161,9 +161,7 @@ const ProductListing = () => {
   Home
 </Link> 
                    
-<Link to="/category" className="text-gray-600 hover:text-indigo-600">
-  Category
-</Link>   
+  
 
 <Link to="/about" className="text-gray-600 hover:text-indigo-600">
   About
@@ -442,9 +440,9 @@ const ProductListing = () => {
                 <p className="text-sm text-gray-600 mb-2">{product.brand}</p>
                 
                 <div className="flex items-center mb-2">
-                  <span className="text-lg font-bold text-indigo-600">${product.discount_price}</span>
+                  <span className="text-lg font-bold text-indigo-600">₹{product.discount_price}</span>
                   {product.price > product.discount_price && (
-                    <span className="text-sm text-gray-500 line-through ml-2">${product.price}</span>
+                    <span className="text-sm text-gray-500 line-through ml-2">₹{product.price}</span>
                   )}
                 </div>
                 

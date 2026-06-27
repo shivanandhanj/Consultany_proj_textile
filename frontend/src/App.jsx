@@ -10,14 +10,14 @@ import Checkout from "./pages/Checkout1"
 import Favour from "./pages/Favour" 
 import  Category from "./pages/Category";
 import Profile from "./pages/pro";
-
+import Inventory from "./pages/admin/Inventory";
 import { ToastProvider } from './context/ToastContext';
 import Layout from "./components/Layout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Customers from "./pages/admin/Customers";
 import Orders from "./pages/admin/Orders";
-import Inventory from "./pages/admin/Inventory";
+import Analytics from "./pages/admin/Analytics";
 import Payment from "./pages/payment";
 import Contact from "./pages/Contact"
 import About from "./pages/about";
@@ -116,6 +116,7 @@ const App = () => {
           <Route path="products" element={<Products />} />
           <Route path="customers" element={<Customers />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="inventory" element={<Inventory />} />
         </Route>
 

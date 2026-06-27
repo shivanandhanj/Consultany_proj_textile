@@ -13,6 +13,7 @@ export default function CategoryPage() {
   const [selectedColor, setSelectedColor] = useState('All');
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [searchQuery, setSearchQuery] = useState('');
+   const navigate=useNavigate();
 
   // Sample product data based on your schema
   const products = [
@@ -299,7 +300,15 @@ export default function CategoryPage() {
               </div>
                <div className="relative" onClick={()=> navigate("/fav")}>
                             <Heart className="h-6 w-6 text-gray-600 cursor-pointer" />
-                            </div> <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+                            </div>
+                            
+                            
+                             <div className="relative" onClick={()=> navigate("/profile")}>
+              
+                             <User className="h-6 w-6 text-gray-600 cursor-pointer" />
+
+                              </div>
+
               <div className="relative" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-6 w-6 text-gray-600 cursor-pointer" />
                 {/* <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span> */}
